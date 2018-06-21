@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.mobilesolutionworks.gradle.basic'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+tasks.withType(Test) {
+    doFirst {
+        logger.quiet("Test JVM Arguments")
+        allJvmArgs.each {
+            logger.quiet(it.toString())
+        }
+        file("$rootDir/jvmargs.log").write(allJvmArgs.join(System.lineSeparator()))
+    }
+}
