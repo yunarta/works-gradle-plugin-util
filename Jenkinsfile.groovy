@@ -75,7 +75,7 @@ pipeline {
             steps {
                 echo "Publishing test and analyze result"
 
-                jacoco execPattern: 'plugin/build/jacoco/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
+                jacoco execPattern: 'works-jacoco/build/jacoco/*.exec', classPattern: 'works-jacoco/build/classes/kotlin/main', sourcePattern: ''
                 junit allowEmptyResults: true, testResults: '**/test-results/**/*.xml'
 //                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'plugin/build/reports/detekt/detekt-report.xml', unHealthy: ''
 
