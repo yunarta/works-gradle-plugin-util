@@ -1,13 +1,12 @@
-package com.mobilesolutionworks.gradle.testKits.plugin
+package com.mobilesolutionworks.gradle.jacoco.testKits.plugin
 
-import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
-import com.mobilesolutionworks.gradle.util.withPaths
+import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.*
 import org.junit.Test
 
-internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
+internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
 
     @Test
     fun `test with without jacoco`() {

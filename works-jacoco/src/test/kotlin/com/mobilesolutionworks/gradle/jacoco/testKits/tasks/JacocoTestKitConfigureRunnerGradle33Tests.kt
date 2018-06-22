@@ -1,7 +1,7 @@
-package com.mobilesolutionworks.gradle.testKits.tasks
+package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
-import com.mobilesolutionworks.gradle.util.withPaths
+import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert

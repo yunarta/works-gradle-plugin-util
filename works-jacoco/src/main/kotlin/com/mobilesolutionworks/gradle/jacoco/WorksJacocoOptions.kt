@@ -1,6 +1,6 @@
-package com.mobilesolutionworks.gradle
+package com.mobilesolutionworks.gradle.jacoco
 
-open class GradleBaseOptions {
+open class WorksJacocoOptions {
 
     var hasTestKit = false
 

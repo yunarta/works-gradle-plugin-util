@@ -1,6 +1,6 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.jacoco.tasks
 
-import com.mobilesolutionworks.gradle.worksJacoco
+import com.mobilesolutionworks.gradle.jacoco.worksJacoco
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.Test

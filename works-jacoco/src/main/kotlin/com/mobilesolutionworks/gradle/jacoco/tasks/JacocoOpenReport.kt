@@ -1,4 +1,4 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.jacoco.tasks
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.Exec

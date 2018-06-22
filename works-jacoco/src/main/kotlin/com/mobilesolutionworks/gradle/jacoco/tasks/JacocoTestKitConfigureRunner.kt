@@ -1,7 +1,7 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.jacoco.tasks
 
-import com.mobilesolutionworks.gradle.util.withPaths
-import com.mobilesolutionworks.gradle.worksJacoco
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
+import com.mobilesolutionworks.gradle.jacoco.worksJacoco
 import org.gradle.api.tasks.WriteProperties
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoBase

@@ -1,6 +1,6 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.jacoco.tasks
 
-import com.mobilesolutionworks.gradle.util.withPaths
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.api.tasks.Copy
 import java.nio.file.Paths
 

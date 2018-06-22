@@ -1,4 +1,4 @@
-package com.mobilesolutionworks.gradle.testUtils
+package com.mobilesolutionworks.gradle.jacoco.testUtils
 
 import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
 import java.io.File

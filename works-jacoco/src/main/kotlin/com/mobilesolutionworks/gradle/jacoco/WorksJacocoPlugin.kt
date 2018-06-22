@@ -1,9 +1,9 @@
-package com.mobilesolutionworks.gradle
+package com.mobilesolutionworks.gradle.jacoco
 
-import com.mobilesolutionworks.gradle.tasks.JacocoOpenReport
-import com.mobilesolutionworks.gradle.tasks.JacocoTestKitConfigureRunner
-import com.mobilesolutionworks.gradle.tasks.JacocoTestKitSetup
-import com.mobilesolutionworks.gradle.tasks.JacocoTestPreparation
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureRunner
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitSetup
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestPreparation
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
@@ -13,15 +13,15 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.util.GradleVersion
 import java.io.File
 
-internal val Project.worksJacoco: GradleBaseOptions
+internal val Project.worksJacoco: WorksJacocoOptions
     get() {
-        return extensions.getByType(GradleBaseOptions::class.java)
+        return extensions.getByType(WorksJacocoOptions::class.java)
     }
 
-class GradleBasePlugin : Plugin<Project> {
+class WorksJacocoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        val options = project.extensions.create("worksJacoco", GradleBaseOptions::class.java)
+        val options = project.extensions.create("worksJacoco", WorksJacocoOptions::class.java)
         options.testKitExecDir = File(project.buildDir, "jacoco").path
 
         project.afterEvaluate {

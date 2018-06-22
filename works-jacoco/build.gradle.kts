@@ -50,7 +50,7 @@ gradlePlugin {
     (plugins) {
         "works-jacoco" {
             id = "com.mobilesolutionworks.gradle.jacoco"
-            implementationClass = "com.mobilesolutionworks.gradle.GradleBasePlugin"
+            implementationClass = "com.mobilesolutionworks.gradle.jacoco.WorksJacocoPlugin"
         }
     }
 }

@@ -1,14 +1,14 @@
-package com.mobilesolutionworks.gradle.testKits.tasks
+package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
-import com.mobilesolutionworks.gradle.util.withPaths
+import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparationTests") {
+internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestKitGradle33") {
 
     @Before
     fun clean() {
@@ -29,16 +29,16 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
+                .withGradleVersion("3.3")
                 .withProjectDir(tempDir.root)
-                .withArguments("test")
+                .withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
                 .let {
-                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
+                    assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 
     @Test
-
     fun `run test with onlyRunCoverageWhenReporting = true`() {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
@@ -52,11 +52,11 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
-                .withArguments("test")
+                .withGradleVersion("3.3")
+                .withProjectDir(tempDir.root).withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated", "--stacktrace")
                 .build()
                 .let {
-                    Assert.assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
+                    assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 
@@ -74,11 +74,12 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
+                .withGradleVersion("3.3")
                 .withProjectDir(tempDir.root)
-                .withArguments("test", "jacocoTestReport")
+                .withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated", "jacocoTestReport")
                 .build()
                 .let {
-                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
+                    assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 }

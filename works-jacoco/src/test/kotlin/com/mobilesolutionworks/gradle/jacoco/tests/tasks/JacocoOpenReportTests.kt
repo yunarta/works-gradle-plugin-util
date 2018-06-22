@@ -1,6 +1,6 @@
-package com.mobilesolutionworks.gradle.tests.tasks
+package com.mobilesolutionworks.gradle.jacoco.tests.tasks
 
-import com.mobilesolutionworks.gradle.tasks.JacocoOpenReport
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test

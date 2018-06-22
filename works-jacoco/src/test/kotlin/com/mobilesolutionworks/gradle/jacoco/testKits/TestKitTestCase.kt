@@ -1,6 +1,6 @@
-package com.mobilesolutionworks.gradle.testKits
+package com.mobilesolutionworks.gradle.jacoco.testKits
 
-import com.mobilesolutionworks.gradle.testUtils.CopyResourceFolder
+import com.mobilesolutionworks.gradle.jacoco.testUtils.CopyResourceFolder
 import org.junit.After
 import org.junit.Before
 import java.io.File
