@@ -88,15 +88,6 @@ tasks.withType<Test> {
     finalizedBy("jacocoTestReport")
 }
 
-//tasks.withType<Test> {
-//    doFirst {
-//        logger.quiet("Test JVM Arguments")
-//        allJvmArgs.forEach {
-//            logger.quiet(" $it")
-//        }
-//    }
-//}
-
 tasks.createLater("openJacocoReport", Exec::class.java) {
     group = "works-jacoco"
 
