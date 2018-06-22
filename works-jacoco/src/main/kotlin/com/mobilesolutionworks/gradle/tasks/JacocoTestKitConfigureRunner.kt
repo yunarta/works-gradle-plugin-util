@@ -1,7 +1,7 @@
 package com.mobilesolutionworks.gradle.tasks
 
 import com.mobilesolutionworks.gradle.util.withPaths
-import com.mobilesolutionworks.gradle.worksOptions
+import com.mobilesolutionworks.gradle.worksJacoco
 import org.gradle.api.tasks.WriteProperties
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoBase
@@ -14,7 +14,7 @@ internal open class JacocoTestKitConfigureRunner : WriteProperties() {
         description = "Prepare javaagent-for-testkit.properties in build/testKit/gradle for testKit coverage"
 
         with(project) {
-            fun target() = when (worksOptions.onlyRunCoverageWhenReporting) {
+            fun target() = when (worksJacoco.onlyRunCoverageWhenReporting) {
                 true -> JacocoBase::class.java
                 else -> Test::class.java
             }
@@ -30,7 +30,7 @@ internal open class JacocoTestKitConfigureRunner : WriteProperties() {
                 dependsOn(setup)
                 setProperties(mapOf(
                         "agentPath" to setup.agentPath.absolutePath,
-                        "outputDir" to file(worksOptions.testKitExecDir).absolutePath
+                        "outputDir" to file(worksJacoco.testKitExecDir).absolutePath
                 ))
             }
 

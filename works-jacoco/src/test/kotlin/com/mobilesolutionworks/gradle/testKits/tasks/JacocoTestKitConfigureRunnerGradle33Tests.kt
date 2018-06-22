@@ -15,7 +15,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
             }
         """.trimMargin())
@@ -27,7 +27,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "--stacktrace")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
@@ -39,7 +39,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
                 onlyRunCoverageWhenReporting = true
             }
@@ -64,7 +64,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
                 onlyRunCoverageWhenReporting = true
             }

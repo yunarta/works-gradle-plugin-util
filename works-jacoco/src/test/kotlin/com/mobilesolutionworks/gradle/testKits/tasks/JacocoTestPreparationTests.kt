@@ -20,7 +20,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = false
             }
         """.trimMargin())
@@ -43,7 +43,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())
@@ -65,7 +65,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())
@@ -75,7 +75,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-                .withArguments("test", "jacocoTestReport", "openJacocoTestReport")
+                .withArguments("test", "jacocoTestReport")
                 .build()
                 .let {
                     Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())

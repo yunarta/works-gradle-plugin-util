@@ -20,7 +20,7 @@ internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestK
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = false
             }
         """.trimMargin())
@@ -43,7 +43,7 @@ internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestK
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())
@@ -53,7 +53,7 @@ internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestK
                 .forwardOutput()
                 .withPluginClasspath()
                 .withGradleVersion("3.3")
-                .withProjectDir(tempDir.root).withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
+                .withProjectDir(tempDir.root).withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated", "--stacktrace")
                 .build()
                 .let {
                     assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
@@ -65,7 +65,7 @@ internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestK
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())

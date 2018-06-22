@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id 'com.mobilesolutionworks.gradle.basic'
+    id 'com.mobilesolutionworks.gradle.jacoco'
 }
 
 repositories {

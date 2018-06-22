@@ -3,8 +3,8 @@ package com.mobilesolutionworks.gradle.testKits.plugin
 import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.gradle.testkit.runner.TaskOutcome
+import org.junit.Assert.*
 import org.junit.Test
 
 internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
@@ -14,7 +14,7 @@ internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
             }
         """.trimMargin())
@@ -39,7 +39,7 @@ internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
             appendText("""
 
             apply plugin: "jacoco"
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
             }
         """.trimMargin())
@@ -64,7 +64,7 @@ internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
             appendText("""
 
             apply plugin: "jacoco"
-            worksOptions {
+            worksJacoco {
                 hasTestKit = true
                 testKitExecDir = "${'$'}buildDir/customJacoco"
             }
@@ -83,4 +83,67 @@ internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
                             .map { it.contains("customJacoco") }.reduce { a, b -> a || b })
                 }
     }
+
+    @Test
+    fun `test open jacoco report`() {
+        tempDir.root.withPaths("target", "build.gradle").apply {
+            appendText("")
+            appendText("""
+
+            apply plugin: "jacoco"
+            worksJacoco {
+                hasTestKit = true
+            }
+
+            tasks.withType(JacocoReport) {
+                reports {
+                    html.enabled = true
+                }
+            }
+        """.trimMargin())
+        }
+
+        val runner = GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withProjectDir(tempDir.root)
+
+        runner.withArguments(":target:tasks")
+                .build()
+                .let {
+                    assertTrue(it.output.contains("openJacocoTestReport"))
+                }
+    }
+
+    @Test
+    fun `test open jacoco report but html disabled`() {
+        tempDir.root.withPaths("target", "build.gradle").apply {
+            appendText("")
+            appendText("""
+
+            apply plugin: "jacoco"
+            worksJacoco {
+                hasTestKit = true
+            }
+
+            tasks.withType(JacocoReport) {
+                reports {
+                    html.enabled = false
+                }
+            }
+        """.trimMargin())
+        }
+
+        val runner = GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withProjectDir(tempDir.root)
+
+        runner.withArguments(":target:tasks")
+                .build()
+                .let {
+                    assertFalse(it.output.contains("openJacocoTestReport"))
+                }
+    }
+
 }

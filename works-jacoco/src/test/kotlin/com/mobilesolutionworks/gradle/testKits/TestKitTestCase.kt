@@ -4,11 +4,15 @@ import com.mobilesolutionworks.gradle.testUtils.CopyResourceFolder
 import org.junit.After
 import org.junit.Before
 import java.io.File
+import java.nio.file.Paths
 import java.util.*
 
 open class TestKitTestCase(folder: String) {
 
-    val tempDir = CopyResourceFolder(File("build/tmp/testKit"), folder)
+    val tempDir = CopyResourceFolder(
+            Paths.get("build", "tmp", "testKit", javaClass.name).toFile(),
+            folder
+    )
 
     @Before
     fun createJavaAgent() {

@@ -1,13 +1,10 @@
 package com.mobilesolutionworks.gradle
 
-import org.gradle.api.Project
-import java.io.File
-
-open class GradleBaseOptions(project: Project) {
+open class GradleBaseOptions {
 
     var hasTestKit = false
 
-    var testKitExecDir = File(project.buildDir, "jacoco").path
+    var testKitExecDir = ""
 
     var onlyRunCoverageWhenReporting = false
 }

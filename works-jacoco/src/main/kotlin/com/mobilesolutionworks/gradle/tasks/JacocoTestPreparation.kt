@@ -1,6 +1,6 @@
 package com.mobilesolutionworks.gradle.tasks
 
-import com.mobilesolutionworks.gradle.worksOptions
+import com.mobilesolutionworks.gradle.worksJacoco
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.Test
@@ -27,7 +27,7 @@ internal open class JacocoTestPreparation : DefaultTask() {
                 test.shouldRunAfter(this@JacocoTestPreparation)
                 val extension = test.extensions.findByType(JacocoTaskExtension::class.java)
                 if (extension != null) {
-                    extension.isEnabled = !project.worksOptions.onlyRunCoverageWhenReporting
+                    extension.isEnabled = !project.worksJacoco.onlyRunCoverageWhenReporting
                 } else throw IllegalStateException("Task can only be used with presence of Jacoco plugin")
             }
 

@@ -7,12 +7,13 @@ import com.mobilesolutionworks.gradle.tasks.JacocoTestPreparation
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
-import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.util.GradleVersion
+import java.io.File
 
-internal val Project.worksOptions: GradleBaseOptions
+internal val Project.worksJacoco: GradleBaseOptions
     get() {
         return extensions.getByType(GradleBaseOptions::class.java)
     }
@@ -20,11 +21,11 @@ internal val Project.worksOptions: GradleBaseOptions
 class GradleBasePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.extensions.create("worksOptions", GradleBaseOptions::class.java, project)
+        val options = project.extensions.create("worksJacoco", GradleBaseOptions::class.java)
+        options.testKitExecDir = File(project.buildDir, "jacoco").path
+
         project.afterEvaluate {
             with(it) {
-
-
                 if (plugins.hasPlugin(JacocoPlugin::class.java)) {
                     setupPreparationTasks()
                     setupTestKitTasks()
@@ -47,7 +48,7 @@ class GradleBasePlugin : Plugin<Project> {
     }
 
     private fun Project.setupTestKitTasks() {
-        if (worksOptions.hasTestKit) {
+        if (worksJacoco.hasTestKit) {
             tasks.create("jacocoTestKitSetup", JacocoTestKitSetup::class.java)
             tasks.create("jacocoTestKitConfigureRunner", JacocoTestKitConfigureRunner::class.java) { task ->
                 configurations.filter {
@@ -65,9 +66,14 @@ class GradleBasePlugin : Plugin<Project> {
 
     private fun Project.setupOpenReportTasks() {
         tasks.withType(JacocoReport::class.java).forEach {
+            println("found ${it.name} ${it.reports.html.isEnabled}")
             it.reports.html.let { html ->
-                tasks.create("open" + StringUtils.capitalize(it.name), JacocoOpenReport::class.java,
-                        html.entryPoint.absolutePath)
+                if (html.isEnabled) {
+                    println(html.entryPoint.absolutePath)
+                    tasks.create("open" + StringUtils.capitalize(it.name), JacocoOpenReport::class.java) {
+                        it.setReport(html.entryPoint.absolutePath)
+                    }
+                }
             }
         }
     }

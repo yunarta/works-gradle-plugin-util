@@ -1,4 +1,5 @@
 import com.mobilesolutionworks.gradle.tasks.JacocoTestKitConfigureRunner
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -6,7 +7,7 @@ plugins {
     `java-gradle-plugin`
     jacoco
 
-    id("works-publish")
+//    id("works-publish")
     id("com.mobilesolutionworks.gradle.basic")
 }
 
@@ -25,10 +26,21 @@ worksOptions {
     hasTestKit = true
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType<Test> {
+    reports {
+        html.isEnabled = false
+    }
+}
+
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
+    implementation("org.apache.commons:commons-lang3:3.7")
 
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
@@ -36,8 +48,8 @@ dependencies {
 
 gradlePlugin {
     (plugins) {
-        "worksBasePlugin" {
-            id = "com.mobilesolutionworks.gradle.basic"
+        "works-jacoco" {
+            id = "com.mobilesolutionworks.gradle.jacoco"
             implementationClass = "com.mobilesolutionworks.gradle.GradleBasePlugin"
         }
     }
@@ -50,7 +62,6 @@ tasks.withType<Delete>().whenObjectAdded {
 }
 
 tasks.withType<JacocoReport> {
-
     reports {
         xml.isEnabled = true
         html.isEnabled = true
@@ -68,12 +79,7 @@ tasks.withType<JacocoReport> {
 
 tasks.create("automateTest") {
     group = "automation"
-
     dependsOn("cleanTest", "test", "jacocoTestReport")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 tasks.withType<Test> {

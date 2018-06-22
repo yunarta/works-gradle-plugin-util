@@ -11,7 +11,7 @@ class JacocoTestPreparationEdgeTests {
     @Test(expected = TaskInstantiationException::class)
     fun `using task without jacoco plugin`() {
         with(ProjectBuilder.builder().build()) {
-            project.extensions.create("worksOptions", GradleBaseOptions::class.java, project)
+            project.extensions.create("worksJacoco", GradleBaseOptions::class.java)
             project.apply {
                 it.plugin("java")
             }
@@ -23,7 +23,7 @@ class JacocoTestPreparationEdgeTests {
     @Test
     fun `using task with jacoco plugin`() {
         with(ProjectBuilder.builder().build()) {
-            project.extensions.create("worksOptions", GradleBaseOptions::class.java, project)
+            project.extensions.create("worksJacoco", GradleBaseOptions::class.java)
             project.apply {
                 it.plugin("java")
                 it.plugin("jacoco")
