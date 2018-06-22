@@ -77,6 +77,10 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+    reports {
+        html.isEnabled = false
+    }
+
     maxParallelForks = Runtime.getRuntime().availableProcessors().div(2)
     doFirst {
         logger.quiet("Test with max $maxParallelForks parallel forks")
