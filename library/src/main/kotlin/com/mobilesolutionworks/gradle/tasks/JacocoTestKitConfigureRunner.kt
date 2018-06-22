@@ -4,15 +4,19 @@ import com.mobilesolutionworks.gradle.util.withPaths
 import com.mobilesolutionworks.gradle.worksOptions
 import org.gradle.api.tasks.WriteProperties
 import org.gradle.api.tasks.testing.Test
-import org.gradle.testing.jacoco.tasks.JacocoReportBase
+import org.gradle.testing.jacoco.tasks.JacocoBase
+import org.gradle.util.GradleVersion
 
-open class JacocoTestKitConfigureRunner : WriteProperties() {
+internal open class JacocoTestKitConfigureRunner : WriteProperties() {
 
     init {
+        group = "works-basic"
+        description = "Prepare javaagent-for-testkit.properties in build/testKit/gradle for testKit coverage"
+
         with(project) {
             fun target() = when (worksOptions.onlyRunCoverageWhenReporting) {
-                true -> JacocoReportBase::class.java
-                false -> Test::class.java
+                true -> JacocoBase::class.java
+                else -> Test::class.java
             }
 
             tasks.withType(target()).forEach { it ->
@@ -25,12 +29,24 @@ open class JacocoTestKitConfigureRunner : WriteProperties() {
             tasks.withType(JacocoTestKitSetup::class.java).forEach { setup ->
                 dependsOn(setup)
 
-                property("agentPath", setup.agentPath.absolutePath)
+                setProperties(mapOf(
+                        "agentPath" to setup.agentPath.absolutePath,
+                        "outputDir" to file(worksOptions.testKitExecDir).absolutePath
+                ))
             }
 
-            property("outputDir", file(worksOptions.testKitExecDir).absolutePath)
         }
 
-        outputFile = project.buildDir.withPaths("testKit", "gradle", "javaagent-for-testkit.properties")
+        setOutput()
+    }
+
+    @Suppress("UsePropertyAccessSyntax")
+    private fun setOutput() {
+        val file = project.buildDir.withPaths("testKit", "gradle", "javaagent-for-testkit.properties")
+        if (GradleVersion.current() >= GradleVersion.version("3.4")) {
+            outputFile = file
+        } else {
+            setOutputFile(file.absolutePath)
+        }
     }
 }

@@ -5,14 +5,17 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
-import org.gradle.testing.jacoco.tasks.JacocoReportBase
+import org.gradle.testing.jacoco.tasks.JacocoBase
 
 /**
  * Task that monitor whether coverage should be executed when jacoco report tasks is included in the queue.
  */
-open class JacocoTestPreparation : DefaultTask() {
+internal open class JacocoTestPreparation : DefaultTask() {
 
     init {
+        group = "works-basic"
+        description = "Handler to control when coverage should be executed even jacoco plugin is active"
+
         logger.info("""
             Jacoco Test Preparation
             -----------------------
@@ -22,12 +25,15 @@ open class JacocoTestPreparation : DefaultTask() {
         with(project) {
             tasks.withType(Test::class.java).forEach { test ->
                 test.shouldRunAfter(this@JacocoTestPreparation)
-                test.extensions.findByType(JacocoTaskExtension::class.java)?.apply {
-                    isEnabled = !project.worksOptions.onlyRunCoverageWhenReporting
-                }
+                val extension = test.extensions.findByType(JacocoTaskExtension::class.java)
+                if (extension != null) {
+                    extension.isEnabled = !project.worksOptions.onlyRunCoverageWhenReporting
+                    println("disabling jacoco, isEnabled = ${isEnabled}")
+                } else throw IllegalStateException("Task can only be used with presence of Jacoco plugin")
             }
 
-            tasks.withType(JacocoReportBase::class.java) { jacocoReport ->
+
+            tasks.withType(JacocoBase::class.java) { jacocoReport ->
                 jacocoReport.dependsOn(this@JacocoTestPreparation.name)
             }
         }
@@ -37,7 +43,8 @@ open class JacocoTestPreparation : DefaultTask() {
     fun enableJacoco() {
         with(project) {
             tasks.withType(Test::class.java) { test ->
-                test.extensions.findByType(JacocoTaskExtension::class.java)?.apply {
+                test.extensions.getByType(JacocoTaskExtension::class.java).apply {
+                    println("enabling jacoco")
                     isEnabled = true
                 }
             }

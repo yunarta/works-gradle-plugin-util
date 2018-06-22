@@ -1,19 +1,13 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.testKits.tasks
 
-import com.mobilesolutionworks.gradle.test.utils.CopyResourceFolder
+import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Rule
+import org.junit.Assert.*
 import org.junit.Test
 
-internal class JacocoTestKitConfigureRunnerTests {
-
-    @JvmField
-    @Rule
-    val tempDir = CopyResourceFolder("JacocoTestKitConfigureRunner")
+internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
@@ -30,11 +24,17 @@ internal class JacocoTestKitConfigureRunnerTests {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceExists")
+        runner.withArguments("test")
                 .build()
                 .let {
-                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
+                    assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
+                    tempDir.root.withPaths(
+                            "target",
+                            "build", "testKit", "jacocoAgent",
+                            "jacocoagent.jar"
+                    ).let {
+                        assertTrue(it.exists())
+                    }
                 }
     }
 
@@ -54,11 +54,17 @@ internal class JacocoTestKitConfigureRunnerTests {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
+        runner.withArguments("test")
                 .build()
                 .let {
-                    assertNull(it.task(":target:jacocoTestKitConfigureRunner"))
+                    assertNull(it.task(":target:jacocoTestKitSetup"))
+                    tempDir.root.withPaths(
+                            "target",
+                            "build", "testKit", "jacocoAgent",
+                            "jacocoagent.jar"
+                    ).let {
+                        assertFalse(it.exists())
+                    }
                 }
     }
 
@@ -78,16 +84,23 @@ internal class JacocoTestKitConfigureRunnerTests {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
+        runner.withArguments("test", "jacocoTestReport")
                 .build()
                 .let {
-                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
+                    assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
+                    tempDir.root.withPaths(
+                            "target",
+                            "build", "testKit", "jacocoAgent",
+                            "jacocoagent.jar"
+                    ).let {
+                        assertTrue(it.exists())
+                    }
                 }
     }
 
+
     @Test
-    fun `verify configure works incrementally`() {
+    fun `verify extraction works incrementally`() {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
@@ -101,17 +114,22 @@ internal class JacocoTestKitConfigureRunnerTests {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-
-        runner.withArguments("jacocoTestKitConfigureRunner")
+        runner.withArguments("test")
                 .build()
                 .let {
-                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
+                    assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
+                    tempDir.root.withPaths(
+                            "target",
+                            "build", "testKit", "jacocoAgent",
+                            "jacocoagent.jar"
+                    ).let {
+                        assertTrue(it.exists())
+                    }
                 }
-
-        runner.withArguments("jacocoTestKitConfigureRunner")
+        runner.withArguments("test")
                 .build()
                 .let {
-                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.UP_TO_DATE)
+                    assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.UP_TO_DATE)
                 }
     }
 }

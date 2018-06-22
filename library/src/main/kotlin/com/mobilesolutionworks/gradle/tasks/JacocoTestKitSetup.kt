@@ -4,31 +4,20 @@ import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.api.tasks.Copy
 import java.nio.file.Paths
 
-open class JacocoTestKitSetup : Copy() {
+internal open class JacocoTestKitSetup : Copy() {
 
-    var agentPath = project.buildDir.withPaths("testKit", "jacocoAgent", "jacocoagent.jar")
+    val agentPath = project.buildDir.withPaths("testKit", "jacocoAgent", "jacocoagent.jar")
 
     init {
-        with(project) {
-//            if (worksOptions.onlyRunCoverageWhenReporting) {
-//                tasks.withType(JacocoTestPreparation::class.java).forEach { it ->
-//                    shouldRunAfter(it)
-//                }
-//
-//                tasks.withType(JacocoReportBase::class.java).forEach { it ->
-//                    dependsOn(it)
-//                }
-//            } else {
-//                tasks.withType(Test::class.java).forEach { test ->
-//                    test.dependsOn(this@JacocoTestKitSetup)
-//                    test.shouldRunAfter(this@JacocoTestKitSetup)
-//                }
-//            }
+        group = "works-basic"
+        description = "Extract the jacocoagent for testKit coverage"
 
-            project.configurations.findByName("jacocoAgent")?.let {
-                from(zipTree(it.asPath))
+        with(project) {
+            val configuration = project.configurations.findByName("jacocoAgent")
+            if (configuration != null) {
+                from(zipTree(configuration.asPath))
                 into(file(Paths.get(buildDir.name, "testKit", "jacocoAgent").toFile()))
-            }
+            } else throw IllegalStateException("Task can only be used with presence of Jacoco plugin")
         }
     }
 }

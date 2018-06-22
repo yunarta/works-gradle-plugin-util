@@ -8,6 +8,10 @@ repositories {
     jcenter()
 }
 
+jacoco {
+    toolVersion = "0.8.1"
+}
+
 dependencies {
     testCompile 'junit:junit:4.12'
 }
@@ -19,10 +23,6 @@ tasks.withType(Test) {
             logger.quiet(" ${it}")
         }
         file("$rootDir/jvmargs.log").write(allJvmArgs.join(System.lineSeparator()))
-
-        logger.quiet("Installed plugin")
-        convention.plugins.each { key, value ->
-            logger.quiet(" - $key")
-        }
+        logger.quiet("jacoco.enabled = ${jacoco.enabled}")
     }
 }

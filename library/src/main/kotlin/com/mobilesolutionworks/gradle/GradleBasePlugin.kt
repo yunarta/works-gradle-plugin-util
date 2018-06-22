@@ -20,16 +20,16 @@ class GradleBasePlugin : Plugin<Project> {
         project.extensions.create("worksOptions", GradleBaseOptions::class.java, project)
         project.afterEvaluate {
             with(it) {
+                val currentTestRuntime = when {
+                    GradleVersion.current() >= GradleVersion.version("3.4") -> "testRuntimeOnly"
+                    else -> "testRuntime"
+                }
+
                 plugins.findPlugin(JacocoPlugin::class.java)?.apply {
                     tasks.create("jacocoTestPreparation", JacocoTestPreparation::class.java)
                 }
 
                 if (worksOptions.hasTestKit) {
-                    val currentTestRuntime = when {
-                        GradleVersion.current() >= GradleVersion.version("3.4") -> "testRuntimeOnly"
-                        else -> "testRuntime"
-                    }
-
                     tasks.create("jacocoTestKitSetup", JacocoTestKitSetup::class.java)
                     tasks.create("jacocoTestKitConfigureRunner", JacocoTestKitConfigureRunner::class.java) { task ->
                         configurations.singleOrNull {

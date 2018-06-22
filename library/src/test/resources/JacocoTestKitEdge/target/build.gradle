@@ -13,6 +13,6 @@ jacoco {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
-    implementation gradleTestKit()
+    testCompile 'junit:junit:4.12'
+    compileOnly gradleTestKit()
 }

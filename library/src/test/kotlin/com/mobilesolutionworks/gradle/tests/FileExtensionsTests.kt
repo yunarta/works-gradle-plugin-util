@@ -1,5 +1,6 @@
-package com.mobilesolutionworks.gradle.util
+package com.mobilesolutionworks.gradle.tests
 
+import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert.assertEquals
 import org.junit.Test

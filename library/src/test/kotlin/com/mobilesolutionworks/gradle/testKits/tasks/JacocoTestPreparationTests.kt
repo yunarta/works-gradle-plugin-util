@@ -1,19 +1,14 @@
-package com.mobilesolutionworks.gradle.tasks
+package com.mobilesolutionworks.gradle.testKits.tasks
 
-import com.mobilesolutionworks.gradle.test.utils.CopyResourceFolder
+import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
-internal class JacocoTestPreparationTests {
-
-    @JvmField
-    @Rule
-    val tempDir = CopyResourceFolder("JacocoTestPreparationTests")
+internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparationTests") {
 
     @Test
     fun `run test with onlyRunCoverageWhenReporting = false`() {
