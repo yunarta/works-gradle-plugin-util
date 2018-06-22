@@ -9,14 +9,15 @@ repositories {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    implementation gradleTestKit()
 }
 
 tasks.withType(Test) {
     doFirst {
         logger.quiet("Test JVM Arguments")
         allJvmArgs.each {
-            logger.quiet(it.toString())
+            logger.quiet(" ${it}")
         }
         file("$rootDir/jvmargs.log").write(allJvmArgs.join(System.lineSeparator()))
     }

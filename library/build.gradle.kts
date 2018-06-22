@@ -20,7 +20,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
 }
@@ -29,13 +28,21 @@ gradlePlugin {
     (plugins) {
         "worksBasePlugin" {
             id = "com.mobilesolutionworks.gradle.basic"
-            implementationClass = "com.mobilesolutionworks.gradle.BasePlugin"
+            implementationClass = "com.mobilesolutionworks.gradle.GradleBasePlugin"
         }
     }
 }
 
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType<Test> {
+    maxParallelForks = Runtime.getRuntime().availableProcessors().div(2)
+    doFirst {
+        logger.quiet("Test with max $maxParallelForks parallel forks")
+    }
 }
 
 tasks.withType<Test> {

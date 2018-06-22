@@ -4,12 +4,12 @@ buildscript {
         google()
         mavenCentral()
         maven {
-            url = java.net.URI("https://dl.bintray.com/mobilesolutionworks/release")
+            url = java.net.URI("https://dl.bintray.com/mobilesolutionworks/snapshot")
         }
     }
 
     dependencies {
-        classpath("com.mobilesolutionworks:works-publish:1.5.2")
+        classpath("com.mobilesolutionworks:works-publish:1.5.3-BUILD-2")
     }
 }
 
