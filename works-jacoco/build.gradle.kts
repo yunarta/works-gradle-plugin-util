@@ -1,5 +1,3 @@
-import com.mobilesolutionworks.gradle.tasks.JacocoTestKitConfigureRunner
-import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -8,11 +6,12 @@ plugins {
     jacoco
 
 //    id("works-publish")
-    id("com.mobilesolutionworks.gradle.basic")
+    id("com.gradle.plugin-publish") version "0.9.10"
+    id("com.mobilesolutionworks.gradle.jacoco") version "1.0.0"
 }
 
 group = "com.mobilesolutionworks.gradle"
-version = "1.0.0-BUILD-2"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -22,7 +21,7 @@ jacoco {
     toolVersion = "0.8.1"
 }
 
-worksOptions {
+worksJacoco {
     hasTestKit = true
 }
 
@@ -55,6 +54,20 @@ gradlePlugin {
     }
 }
 
+pluginBundle {
+    website = "https://github.com/yunarta/works-jacoco-gradle-plugin"
+    vcsUrl = "https://github.com/yunarta/works-jacoco-gradle-plugin"
+    description = "Plugin to reduce code duplication especially when writing Gradle plugin project"
+    tags = listOf("jacoco", "works")
+
+    (plugins) {
+        "works-jacoco" {
+            id = "com.mobilesolutionworks.gradle.jacoco"
+            displayName = "Gradle Jacoco task manager"
+        }
+    }
+}
+
 tasks.withType<Delete>().whenObjectAdded {
     if (name == "cleanTest") {
         delete(file("$buildDir/tmp/testKit"))
@@ -67,19 +80,9 @@ tasks.withType<JacocoReport> {
         html.isEnabled = true
     }
 
-    // generated classes
-    classDirectories = fileTree(mapOf(
-            "dir" to "$buildDir/classes/kotlin/main")
-    )
-
-    // sources
+    classDirectories = fileTree(mapOf("dir" to "$buildDir/classes/kotlin/main"))
     sourceDirectories = files(listOf("src/main/kotlin", "src/main/java"))
     executionData = fileTree(mapOf("dir" to buildDir, "include" to "jacoco/*.exec"))
-}
-
-tasks.create("automateTest") {
-    group = "automation"
-    dependsOn("cleanTest", "test", "jacocoTestReport")
 }
 
 tasks.withType<Test> {
@@ -92,13 +95,4 @@ tasks.withType<Test> {
         logger.quiet("Test with max $maxParallelForks parallel forks")
     }
     finalizedBy("jacocoTestReport")
-}
-
-tasks.createLater("openJacocoReport", Exec::class.java) {
-    group = "works-jacoco"
-
-    tasks.withType<JacocoReport> {
-        val index = reports.html.entryPoint.absolutePath
-        setCommandLine("open", index)
-    }
 }

@@ -10,7 +10,6 @@ buildscript {
 
     dependencies {
         classpath("com.mobilesolutionworks:works-publish:1.5.3-BUILD-2")
-        classpath("com.mobilesolutionworks.gradle:works-gradle-plugin-util:1.0.0-BUILD-2")
     }
 }
 
