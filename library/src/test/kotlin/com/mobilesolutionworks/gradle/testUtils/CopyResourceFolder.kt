@@ -1,23 +1,21 @@
 package com.mobilesolutionworks.gradle.testUtils
 
 import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
-import org.junit.rules.TemporaryFolder
 import java.io.File
 
-class CopyResourceFolder(private val name: String, folder: File? = null, private val clearOnExit: Boolean = false) : TemporaryFolder(folder) {
+class CopyResourceFolder(parent: File, private val resource: String) {
+
+    val root = File(parent, resource)
 
     init {
-        folder?.mkdirs()
+        root.mkdirs()
     }
 
-    override fun create() {
-        super.create()
-        FileUtils.copyDirectory(File(javaClass.classLoader.getResource(name).file), root)
+    fun create() {
+        FileUtils.copyDirectory(File(javaClass.classLoader.getResource(resource).file), root)
     }
 
-    override fun delete() {
-        if (clearOnExit) {
-            super.delete()
-        }
+    fun delete() {
+        root.deleteRecursively()
     }
 }

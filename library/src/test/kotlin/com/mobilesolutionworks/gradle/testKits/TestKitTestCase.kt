@@ -8,7 +8,7 @@ import java.util.*
 
 open class TestKitTestCase(folder: String) {
 
-    val tempDir = CopyResourceFolder(folder, File("/Users/yunarta/Works/yunarta/works-gradle-plugin-util/library/build/tmp/testKit"), false)
+    val tempDir = CopyResourceFolder(File("build/tmp/testKit"), folder)
 
     @Before
     fun createJavaAgent() {
@@ -22,14 +22,14 @@ open class TestKitTestCase(folder: String) {
 
                 val execFile = File(outputDir, "${javaClass.name}.exec")
                 val agentString = "org.gradle.jvmargs=-javaagent\\:${agentPath}\\=destfile\\=${execFile.absolutePath}"
-                tempDir.newFile("gradle.properties").writeText(agentString)
+
+                File(tempDir.root, "gradle.properties").writeText(agentString)
             }
         }
     }
 
     @After
     fun tearDown() {
-        tempDir.delete()
-
+        // tempDir.delete()
     }
 }

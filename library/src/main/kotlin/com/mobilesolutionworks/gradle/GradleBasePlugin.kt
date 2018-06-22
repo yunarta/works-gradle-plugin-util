@@ -27,16 +27,16 @@ class GradleBasePlugin : Plugin<Project> {
 
                 plugins.findPlugin(JacocoPlugin::class.java)?.apply {
                     tasks.create("jacocoTestPreparation", JacocoTestPreparation::class.java)
-                }
 
-                if (worksOptions.hasTestKit) {
-                    tasks.create("jacocoTestKitSetup", JacocoTestKitSetup::class.java)
-                    tasks.create("jacocoTestKitConfigureRunner", JacocoTestKitConfigureRunner::class.java) { task ->
-                        configurations.singleOrNull {
-                            it.name == currentTestRuntime
-                        }?.let { configuration ->
-                            task.outputFile.parentFile.mkdirs()
-                            dependencies.add(configuration.name, files(task.outputFile.parentFile))
+                    if (worksOptions.hasTestKit) {
+                        tasks.create("jacocoTestKitSetup", JacocoTestKitSetup::class.java)
+                        tasks.create("jacocoTestKitConfigureRunner", JacocoTestKitConfigureRunner::class.java) { task ->
+                            configurations.filter {
+                                it.name == currentTestRuntime
+                            }.map {
+                                task.outputFile.parentFile.mkdirs()
+                                dependencies.add(it.name, files(task.outputFile.parentFile))
+                            }
                         }
                     }
                 }

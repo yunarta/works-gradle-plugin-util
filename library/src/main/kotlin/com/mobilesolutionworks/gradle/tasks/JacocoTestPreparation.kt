@@ -28,7 +28,6 @@ internal open class JacocoTestPreparation : DefaultTask() {
                 val extension = test.extensions.findByType(JacocoTaskExtension::class.java)
                 if (extension != null) {
                     extension.isEnabled = !project.worksOptions.onlyRunCoverageWhenReporting
-                    println("disabling jacoco, isEnabled = ${isEnabled}")
                 } else throw IllegalStateException("Task can only be used with presence of Jacoco plugin")
             }
 
@@ -44,7 +43,6 @@ internal open class JacocoTestPreparation : DefaultTask() {
         with(project) {
             tasks.withType(Test::class.java) { test ->
                 test.extensions.getByType(JacocoTaskExtension::class.java).apply {
-                    println("enabling jacoco")
                     isEnabled = true
                 }
             }

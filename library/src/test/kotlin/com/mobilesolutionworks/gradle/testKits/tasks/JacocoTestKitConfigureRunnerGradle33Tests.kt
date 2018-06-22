@@ -1,16 +1,17 @@
-package com.mobilesolutionworks.gradle.testKits.plugin
+package com.mobilesolutionworks.gradle.testKits.tasks
 
 import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert.assertFalse
+import org.gradle.testkit.runner.TaskOutcome
+import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
+internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("JacocoTestKitGradle33") {
 
     @Test
-    fun `test with without jacoco`() {
+    fun `test with onlyRunCoverageWhenReporting = false`() {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
@@ -22,65 +23,64 @@ internal class GradleBasePluginTest : TestKitTestCase("PluginTests") {
 
         val runner = GradleRunner.create()
                 .forwardOutput()
+                .withGradleVersion("3.3")
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test", "cleanTest")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists")
                 .build()
                 .let {
-                    assertFalse(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").exists())
+                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
                 }
     }
 
     @Test
-    fun `test with jacoco`() {
+    fun `test with onlyRunCoverageWhenReporting = true`() {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-
-            apply plugin: "jacoco"
             worksOptions {
                 hasTestKit = true
+                onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())
         }
 
         val runner = GradleRunner.create()
                 .forwardOutput()
+                .withGradleVersion("3.3")
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test", "cleanTest")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
                 .let {
-                    assertFalse(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").exists())
+                    Assert.assertNull(it.task(":target:jacocoTestKitConfigureRunner"))
                 }
     }
 
     @Test
-    fun `test with jacoco with different output`() {
+    fun `test with onlyRunCoverageWhenReporting = true, and with report task`() {
         tempDir.root.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
-
-            apply plugin: "jacoco"
             worksOptions {
                 hasTestKit = true
-                testKitExecDir = "${'$'}buildDir/customJacoco"
+                onlyRunCoverageWhenReporting = true
             }
         """.trimMargin())
         }
 
         val runner = GradleRunner.create()
                 .forwardOutput()
+                .withGradleVersion("3.3")
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
                 .build()
                 .let {
-                    assertTrue(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").readLines()
-                            .map { it.contains("customJacoco") }.reduce { a, b -> a || b })
+                    assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
                 }
     }
 }

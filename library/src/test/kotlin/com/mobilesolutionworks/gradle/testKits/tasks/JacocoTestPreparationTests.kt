@@ -3,12 +3,17 @@ package com.mobilesolutionworks.gradle.testKits.tasks
 import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
 internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparationTests") {
+
+    @Before
+    fun clean() {
+        File("jacoco.log").delete()
+    }
 
     @Test
     fun `run test with onlyRunCoverageWhenReporting = false`() {
@@ -28,13 +33,10 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
                 .withArguments("test")
                 .build()
                 .let {
-                    assertFalse(File(tempDir.root, "jvmargs.log")
-                            .readLines()
-                            .singleOrNull { it.startsWith("-javaagent") }
-                            .isNullOrBlank()
-                    )
+                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
+
     @Test
 
     fun `run test with onlyRunCoverageWhenReporting = true`() {
@@ -54,11 +56,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
                 .withArguments("test")
                 .build()
                 .let {
-                    assertTrue(File(tempDir.root, "jvmargs.log")
-                            .readLines()
-                            .singleOrNull { it.startsWith("-javaagent") }
-                            .isNullOrBlank()
-                    )
+                    Assert.assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 
@@ -80,11 +78,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
                 .withArguments("test", "jacocoTestReport")
                 .build()
                 .let {
-                    assertFalse(File(tempDir.root, "jvmargs.log")
-                            .readLines()
-                            .singleOrNull { it.startsWith("-javaagent") }
-                            .isNullOrBlank()
-                    )
+                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 }

@@ -28,7 +28,6 @@ internal open class JacocoTestKitConfigureRunner : WriteProperties() {
 
             tasks.withType(JacocoTestKitSetup::class.java).forEach { setup ->
                 dependsOn(setup)
-
                 setProperties(mapOf(
                         "agentPath" to setup.agentPath.absolutePath,
                         "outputDir" to file(worksOptions.testKitExecDir).absolutePath

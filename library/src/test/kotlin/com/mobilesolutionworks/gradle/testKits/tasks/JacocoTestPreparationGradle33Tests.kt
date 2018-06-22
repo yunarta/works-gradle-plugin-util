@@ -1,18 +1,19 @@
 package com.mobilesolutionworks.gradle.testKits.tasks
 
-import com.mobilesolutionworks.gradle.testUtils.CopyResourceFolder
+import com.mobilesolutionworks.gradle.testKits.TestKitTestCase
 import com.mobilesolutionworks.gradle.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert.assertTrue
-import org.junit.Rule
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-internal class JacocoTestPreparationGradle33Tests {
+internal class JacocoTestPreparationGradle33Tests : TestKitTestCase("JacocoTestKitGradle33") {
 
-    @JvmField
-    @Rule
-    val tempDir = CopyResourceFolder("JacocoTestKitEdge", File("/Users/yunarta/Works/yunarta/works-gradle-plugin-util/library/build/tmp/testKit"), false)
+    @Before
+    fun clean() {
+        File("jacoco.log").delete()
+    }
 
     @Test
     fun `run test with onlyRunCoverageWhenReporting = false`() {
@@ -30,10 +31,10 @@ internal class JacocoTestPreparationGradle33Tests {
                 .withPluginClasspath()
                 .withGradleVersion("3.3")
                 .withProjectDir(tempDir.root)
-                .withArguments("test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
+                .withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
                 .let {
-                    assertTrue(tempDir.root.withPaths("target", "build", "jacoco", "test.exec").exists())
+                    assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 
@@ -48,16 +49,14 @@ internal class JacocoTestPreparationGradle33Tests {
         """.trimMargin())
         }
 
-        val runner = GradleRunner.create()
+        GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
                 .withGradleVersion("3.3")
-                .withProjectDir(tempDir.root)
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
+                .withProjectDir(tempDir.root).withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
                 .let {
-                    // TODO: seems like even though JacocoTaskExtension isEnabled = false, jacoco still executes
-                    // assertFalse(tempDir.root.withPaths("target", "build", "jacoco", "test.exec").exists())
+                    assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 
@@ -77,10 +76,10 @@ internal class JacocoTestPreparationGradle33Tests {
                 .withPluginClasspath()
                 .withGradleVersion("3.3")
                 .withProjectDir(tempDir.root)
-                .withArguments("test", "--tests", "example.ExampleTest.verifyResourceNotCreated", "jacocoTestReport")
+                .withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated", "jacocoTestReport")
                 .build()
                 .let {
-                    assertTrue(tempDir.root.withPaths("target", "build", "jacoco", "test.exec").exists())
+                    assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
                 }
     }
 }

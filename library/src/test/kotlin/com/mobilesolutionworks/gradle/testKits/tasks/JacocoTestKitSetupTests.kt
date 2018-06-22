@@ -7,7 +7,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.*
 import org.junit.Test
 
-internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
+internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
@@ -24,7 +24,7 @@ internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-        runner.withArguments("test")
+        runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
@@ -54,7 +54,7 @@ internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-        runner.withArguments("test")
+        runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertNull(it.task(":target:jacocoTestKitSetup"))
@@ -84,7 +84,7 @@ internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-        runner.withArguments("test", "jacocoTestReport")
+        runner.withArguments("clean", "test", "jacocoTestReport")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
@@ -114,7 +114,7 @@ internal class JacocoTestKitSetupTests: TestKitTestCase("JacocoTestKitSetup") {
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-        runner.withArguments("test")
+        runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)

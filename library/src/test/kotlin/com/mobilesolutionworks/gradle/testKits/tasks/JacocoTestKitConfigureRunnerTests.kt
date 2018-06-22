@@ -8,7 +8,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class JacocoTestKitConfigureRunnerTests: TestKitTestCase("JacocoTestKitConfigureRunner") {
+internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKitConfigureRunner") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
@@ -26,7 +26,7 @@ internal class JacocoTestKitConfigureRunnerTests: TestKitTestCase("JacocoTestKit
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceExists")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
@@ -50,7 +50,7 @@ internal class JacocoTestKitConfigureRunnerTests: TestKitTestCase("JacocoTestKit
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
                 .let {
                     assertNull(it.task(":target:jacocoTestKitConfigureRunner"))
@@ -74,7 +74,7 @@ internal class JacocoTestKitConfigureRunnerTests: TestKitTestCase("JacocoTestKit
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
@@ -97,7 +97,7 @@ internal class JacocoTestKitConfigureRunnerTests: TestKitTestCase("JacocoTestKit
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
 
-        runner.withArguments("jacocoTestKitConfigureRunner")
+        runner.withArguments("clean", "jacocoTestKitConfigureRunner")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)

@@ -18,11 +18,7 @@ dependencies {
 
 tasks.withType(Test) {
     doFirst {
-        logger.quiet("Test JVM Arguments")
-        allJvmArgs.each {
-            logger.quiet(" ${it}")
-        }
-        file("$rootDir/jvmargs.log").write(allJvmArgs.join(System.lineSeparator()))
         logger.quiet("jacoco.enabled = ${jacoco.enabled}")
+        file("$rootDir/jacoco.log").write("${jacoco.enabled}")
     }
 }
