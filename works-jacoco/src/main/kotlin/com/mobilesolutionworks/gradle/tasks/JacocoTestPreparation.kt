@@ -13,7 +13,7 @@ import org.gradle.testing.jacoco.tasks.JacocoBase
 internal open class JacocoTestPreparation : DefaultTask() {
 
     init {
-        group = "works-basic"
+        group = "works-others"
         description = "Handler to control when coverage should be executed even jacoco plugin is active"
 
         logger.info("""

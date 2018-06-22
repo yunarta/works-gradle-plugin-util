@@ -10,7 +10,7 @@ import org.gradle.util.GradleVersion
 internal open class JacocoTestKitConfigureRunner : WriteProperties() {
 
     init {
-        group = "works-basic"
+        group = "works-others"
         description = "Prepare javaagent-for-testkit.properties in build/testKit/gradle for testKit coverage"
 
         with(project) {

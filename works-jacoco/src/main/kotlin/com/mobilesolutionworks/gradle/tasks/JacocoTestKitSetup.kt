@@ -9,7 +9,7 @@ internal open class JacocoTestKitSetup : Copy() {
     val agentPath = project.buildDir.withPaths("testKit", "jacocoAgent", "jacocoagent.jar")
 
     init {
-        group = "works-basic"
+        group = "works-others"
         description = "Extract the jacocoagent for testKit coverage"
 
         with(project) {

@@ -75,7 +75,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
                 .forwardOutput()
                 .withPluginClasspath()
                 .withProjectDir(tempDir.root)
-                .withArguments("test", "jacocoTestReport")
+                .withArguments("test", "jacocoTestReport", "openJacocoTestReport")
                 .build()
                 .let {
                     Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
