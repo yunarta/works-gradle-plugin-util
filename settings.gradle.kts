@@ -1,5 +1,5 @@
-rootProject.name = "Works - Gradle Plugin Utility"
+rootProject.name = "Gradle Plugin: Works Jacoco"
 
 include(":works-jacoco")
-project(":works-jacoco").projectDir = File("works-jacoco")
+project(":works-jacoco").projectDir = File("plugin")
 
