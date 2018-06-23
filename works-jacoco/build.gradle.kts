@@ -5,7 +5,6 @@ plugins {
     `java-gradle-plugin`
     jacoco
 
-//    id("works-publish")
     id("com.gradle.plugin-publish") version "0.9.10"
     id("com.mobilesolutionworks.gradle.jacoco") version "1.0.0"
 }
@@ -36,7 +35,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(gradleApi())
+    compileOnly(gradleApi())
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("org.apache.commons:commons-lang3:3.7")

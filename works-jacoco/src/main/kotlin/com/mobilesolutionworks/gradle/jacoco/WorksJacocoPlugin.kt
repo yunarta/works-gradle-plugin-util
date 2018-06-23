@@ -4,10 +4,10 @@ import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
 import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureRunner
 import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitSetup
 import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestPreparation
+import org.apache.commons.lang3.StringUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
-import org.apache.commons.lang3.StringUtils
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.util.GradleVersion
@@ -66,10 +66,8 @@ class WorksJacocoPlugin : Plugin<Project> {
 
     private fun Project.setupOpenReportTasks() {
         tasks.withType(JacocoReport::class.java).forEach {
-            println("found ${it.name} ${it.reports.html.isEnabled}")
             it.reports.html.let { html ->
                 if (html.isEnabled) {
-                    println(html.entryPoint.absolutePath)
                     tasks.create("open" + StringUtils.capitalize(it.name), JacocoOpenReport::class.java) {
                         it.setReport(html.entryPoint.absolutePath)
                     }
