@@ -1,6 +1,6 @@
 package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -8,11 +8,11 @@ import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("JacocoTestKitGradle33") {
+internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKit("JacocoTestKitGradle33") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -25,7 +25,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
                 .forwardOutput()
                 .withGradleVersion("3.3")
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "--stacktrace")
                 .build()
@@ -36,7 +36,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -50,7 +50,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
                 .forwardOutput()
                 .withGradleVersion("3.3")
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
@@ -61,7 +61,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true, and with report task`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -75,7 +75,7 @@ internal class JacocoTestKitConfigureRunnerGradle33Tests : TestKitTestCase("Jaco
                 .forwardOutput()
                 .withGradleVersion("3.3")
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
                 .build()

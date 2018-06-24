@@ -1,6 +1,6 @@
 package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Assert
@@ -8,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparationTests") {
+internal class JacocoTestPreparationTests : TestKit("JacocoTestPreparationTests") {
 
     @Before
     fun clean() {
@@ -17,7 +17,7 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
 
     @Test
     fun `run test with onlyRunCoverageWhenReporting = false`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -29,18 +29,18 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
-                .withArguments("test")
+                .withProjectDir(rootDir)
+                .withArguments("clean", "test")
                 .build()
                 .let {
-                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
+                    Assert.assertEquals("true", File(rootDir, "jacoco.log").readLines().single())
                 }
     }
 
     @Test
 
     fun `run test with onlyRunCoverageWhenReporting = true`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -52,17 +52,17 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
-                .withArguments("test")
+                .withProjectDir(rootDir)
+                .withArguments("clean", "test")
                 .build()
                 .let {
-                    Assert.assertEquals("false", File(tempDir.root, "jacoco.log").readLines().single())
+                    Assert.assertEquals("false", File(rootDir, "jacoco.log").readLines().single())
                 }
     }
 
     @Test
     fun `run test with onlyRunCoverageWhenReporting = true, and with report task`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -74,11 +74,11 @@ internal class JacocoTestPreparationTests : TestKitTestCase("JacocoTestPreparati
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
-                .withArguments("test", "jacocoTestReport")
+                .withProjectDir(rootDir)
+                .withArguments("clean", "test", "jacocoTestReport")
                 .build()
                 .let {
-                    Assert.assertEquals("true", File(tempDir.root, "jacoco.log").readLines().single())
+                    Assert.assertEquals("true", File(rootDir, "jacoco.log").readLines().single())
                 }
     }
 }

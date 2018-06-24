@@ -1,6 +1,6 @@
 package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -8,11 +8,11 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKitConfigureRunner") {
+internal class JacocoTestKitConfigureRunnerTests : TestKit("JacocoTestKitConfigureRunner") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -24,9 +24,9 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists")
+        runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "--stacktrace")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitConfigureRunner")?.outcome == TaskOutcome.SUCCESS)
@@ -35,7 +35,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -48,7 +48,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceNotCreated")
                 .build()
@@ -59,7 +59,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true, and with report task`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -72,7 +72,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "test", "--tests", "example.ExampleTest.verifyResourceExists", "jacocoTestReport")
                 .build()
@@ -83,7 +83,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
 
     @Test
     fun `verify configure works incrementally`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -95,7 +95,7 @@ internal class JacocoTestKitConfigureRunnerTests : TestKitTestCase("JacocoTestKi
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
         runner.withArguments("clean", "jacocoTestKitConfigureRunner")
                 .build()

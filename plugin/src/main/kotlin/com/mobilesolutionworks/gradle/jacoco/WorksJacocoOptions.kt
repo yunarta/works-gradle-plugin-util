@@ -6,5 +6,9 @@ open class WorksJacocoOptions {
 
     var testKitExecDir = ""
 
+    var testKitTmpDir = ""
+
     var onlyRunCoverageWhenReporting = false
+
+    var agentPropertiesName = "javaagent-for-testkit.properties"
 }

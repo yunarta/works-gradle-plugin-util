@@ -1,20 +1,21 @@
 package com.mobilesolutionworks.gradle.jacoco.testKits.plugin
 
-import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Assert.*
 import org.junit.Test
 
-internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
+internal class WorksJacocoPluginTest : TestKit("PluginTests") {
 
     @Test
     fun `test with without jacoco`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
                 hasTestKit = true
+                agentPropertiesName = "agent.properties"
             }
         """.trimMargin())
         }
@@ -22,24 +23,25 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments("test", "cleanTest")
+        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
                 .build()
                 .let {
-                    assertFalse(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").exists())
+                    assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
                 }
     }
 
     @Test
     fun `test with jacoco`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
 
             apply plugin: "jacoco"
             worksJacoco {
                 hasTestKit = true
+                agentPropertiesName = "agent.properties"
             }
         """.trimMargin())
         }
@@ -47,24 +49,25 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments("test", "cleanTest")
+        runner.withArguments("clean", "cleanTest", "test", "--stacktrace")
                 .build()
                 .let {
-                    assertFalse(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").exists())
+                    assertEquals(true, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
                 }
     }
 
     @Test
     fun `test with jacoco with different output`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
 
             apply plugin: "jacoco"
             worksJacoco {
                 hasTestKit = true
+                agentPropertiesName = "agent.properties"
                 testKitExecDir = "${'$'}buildDir/customJacoco"
             }
         """.trimMargin())
@@ -73,25 +76,26 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments("test")
+        runner.withArguments("clean", "test")
                 .build()
                 .let {
-                    assertTrue(tempDir.root.withPaths("target", "build", "testKit", "gradle", "javaagent-for-testkit.properties").readLines()
+                    assertEquals(true, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").readLines()
                             .map { it.contains("customJacoco") }.reduce { a, b -> a || b })
                 }
     }
 
     @Test
     fun `test open jacoco report`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
 
             apply plugin: "jacoco"
             worksJacoco {
                 hasTestKit = true
+                agentPropertiesName = "agent.properties"
             }
 
             tasks.withType(JacocoReport) {
@@ -105,9 +109,9 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments(":target:tasks")
+        runner.withArguments("clean", ":target:tasks")
                 .build()
                 .let {
                     assertTrue(it.output.contains("openJacocoTestReport"))
@@ -116,13 +120,14 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
 
     @Test
     fun `test open jacoco report but html disabled`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
 
             apply plugin: "jacoco"
             worksJacoco {
                 hasTestKit = true
+                agentPropertiesName = "agent.properties"
             }
 
             tasks.withType(JacocoReport) {
@@ -136,13 +141,12 @@ internal class WorksJacocoPluginTest : TestKitTestCase("PluginTests") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
 
-        runner.withArguments(":target:tasks")
+        runner.withArguments("clean", ":target:tasks")
                 .build()
                 .let {
                     assertFalse(it.output.contains("openJacocoTestReport"))
                 }
     }
-
 }

@@ -1,9 +1,7 @@
 package com.mobilesolutionworks.gradle.jacoco
 
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureRunner
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitSetup
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestPreparation
+import com.mobilesolutionworks.gradle.jacoco.tasks.*
+import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.apache.commons.lang3.StringUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,6 +21,12 @@ class WorksJacocoPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val options = project.extensions.create("worksJacoco", WorksJacocoOptions::class.java)
         options.testKitExecDir = File(project.buildDir, "jacoco").path
+        options.testKitTmpDir = project.buildDir.withPaths("tmp", "testKit").path
+
+        with(project) {
+            setupDeps()
+            setupClean()
+        }
 
         project.afterEvaluate {
             with(it) {
@@ -31,13 +35,29 @@ class WorksJacocoPlugin : Plugin<Project> {
                     setupTestKitTasks()
                     setupOpenReportTasks()
                 }
+            }
+        }
+    }
 
-                tasks.withType(Delete::class.java).whenObjectAdded { delete ->
-                    if (delete.name == "cleanTest") {
-                        tasks.withType(JacocoTestKitConfigureRunner::class.java).forEach {
-                            delete.delete(it.outputs)
-                        }
-                    }
+    private fun Project.setupDeps() {
+        tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
+            configurations.filter {
+                when {
+                    GradleVersion.current() >= GradleVersion.version("3.4") -> listOf("testImplementation", "testRuntimeOnly")
+                    else -> listOf("testCompile", "testRuntime")
+                }.contains(it.name)
+            }.map {
+                dependencies.add(it.name, task.outputs.files)
+                dependencies.add(it.name, files(task.library))
+            }
+        }
+    }
+
+    private fun Project.setupClean() {
+        tasks.withType(Delete::class.java).whenObjectAdded { delete ->
+            if (delete.name == "cleanTest") {
+                tasks.withType(JacocoTestKitConfigureRunner::class.java).forEach {
+                    delete.delete(it.outputs)
                 }
             }
         }

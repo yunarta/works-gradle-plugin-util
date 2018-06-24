@@ -24,13 +24,12 @@ internal open class JacocoTestPreparation : DefaultTask() {
 
         with(project) {
             tasks.withType(Test::class.java).forEach { test ->
-                test.shouldRunAfter(this@JacocoTestPreparation)
+                test.shouldRunAfter(this@JacocoTestPreparation.name)
                 val extension = test.extensions.findByType(JacocoTaskExtension::class.java)
                 if (extension != null) {
                     extension.isEnabled = !project.worksJacoco.onlyRunCoverageWhenReporting
                 } else throw IllegalStateException("Task can only be used with presence of Jacoco plugin")
             }
-
 
             tasks.withType(JacocoBase::class.java) { jacocoReport ->
                 jacocoReport.dependsOn(this@JacocoTestPreparation.name)
@@ -42,8 +41,8 @@ internal open class JacocoTestPreparation : DefaultTask() {
     fun enableJacoco() {
         with(project) {
             tasks.withType(Test::class.java) { test ->
-                test.extensions.getByType(JacocoTaskExtension::class.java).apply {
-                    isEnabled = true
+                test.extensions.getByType(JacocoTaskExtension::class.java).let {
+                    it.isEnabled = true
                 }
             }
         }

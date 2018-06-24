@@ -1,17 +1,17 @@
 package com.mobilesolutionworks.gradle.jacoco.testKits.tasks
 
-import com.mobilesolutionworks.gradle.jacoco.testKits.TestKitTestCase
+import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.*
 import org.junit.Test
 
-internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
+internal class JacocoTestKitSetupTests : TestKit("JacocoTestKitSetup") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = false`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -23,12 +23,12 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
         runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
-                    tempDir.root.withPaths(
+                    rootDir.withPaths(
                             "target",
                             "build", "testKit", "jacocoAgent",
                             "jacocoagent.jar"
@@ -40,7 +40,7 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -53,12 +53,12 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
         runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertNull(it.task(":target:jacocoTestKitSetup"))
-                    tempDir.root.withPaths(
+                    rootDir.withPaths(
                             "target",
                             "build", "testKit", "jacocoAgent",
                             "jacocoagent.jar"
@@ -70,7 +70,7 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
 
     @Test
     fun `test with onlyRunCoverageWhenReporting = true, and with report task`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -83,12 +83,12 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
         runner.withArguments("clean", "test", "jacocoTestReport")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
-                    tempDir.root.withPaths(
+                    rootDir.withPaths(
                             "target",
                             "build", "testKit", "jacocoAgent",
                             "jacocoagent.jar"
@@ -101,7 +101,7 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
 
     @Test
     fun `verify extraction works incrementally`() {
-        tempDir.root.withPaths("target", "build.gradle").apply {
+        rootDir.withPaths("target", "build.gradle").apply {
             appendText("")
             appendText("""
             worksJacoco {
@@ -113,12 +113,12 @@ internal class JacocoTestKitSetupTests : TestKitTestCase("JacocoTestKitSetup") {
         val runner = GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(tempDir.root)
+                .withProjectDir(rootDir)
         runner.withArguments("clean", "test")
                 .build()
                 .let {
                     assertTrue(it.task(":target:jacocoTestKitSetup")?.outcome == TaskOutcome.SUCCESS)
-                    tempDir.root.withPaths(
+                    rootDir.withPaths(
                             "target",
                             "build", "testKit", "jacocoAgent",
                             "jacocoagent.jar"

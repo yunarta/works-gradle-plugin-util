@@ -22,6 +22,7 @@ internal open class JacocoTestKitConfigureRunner : WriteProperties() {
             tasks.withType(target()).forEach { it ->
                 it.dependsOn(this@JacocoTestKitConfigureRunner)
             }
+
             tasks.withType(Test::class.java).forEach { it ->
                 it.shouldRunAfter(this@JacocoTestKitConfigureRunner)
             }
@@ -30,18 +31,18 @@ internal open class JacocoTestKitConfigureRunner : WriteProperties() {
                 dependsOn(setup)
                 setProperties(mapOf(
                         "agentPath" to setup.agentPath.absolutePath,
-                        "outputDir" to file(worksJacoco.testKitExecDir).absolutePath
+                        "outputDir" to file(worksJacoco.testKitExecDir).absolutePath,
+                        "tmpDir" to file(worksJacoco.testKitTmpDir).absolutePath
                 ))
             }
-
         }
 
-        setOutput()
+        setOutput(project.worksJacoco.agentPropertiesName)
     }
 
     @Suppress("UsePropertyAccessSyntax")
-    private fun setOutput() {
-        val file = project.buildDir.withPaths("testKit", "gradle", "javaagent-for-testkit.properties")
+    private fun setOutput(name: String) {
+        val file = project.buildDir.withPaths("testKit", "gradle", name)
         if (GradleVersion.current() >= GradleVersion.version("3.4")) {
             outputFile = file
         } else {
