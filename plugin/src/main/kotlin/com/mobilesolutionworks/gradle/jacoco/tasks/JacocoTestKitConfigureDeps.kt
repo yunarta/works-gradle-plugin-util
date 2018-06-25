@@ -2,12 +2,14 @@ package com.mobilesolutionworks.gradle.jacoco.tasks
 
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.util.*
 
 open class JacocoTestKitConfigureDeps : DefaultTask() {
 
+    @OutputFile
     val library: File
 
     init {
@@ -16,7 +18,7 @@ open class JacocoTestKitConfigureDeps : DefaultTask() {
             load(loader.getResourceAsStream("META-INF/testKit.properties"))
         }.getOrDefault("TestKit", "").toString()
 
-        library = project.buildDir.withPaths("works", name)
+        library = project.buildDir.withPaths("testKit", "libs", name)
         outputs.file(library)
     }
 

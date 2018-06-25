@@ -18,7 +18,6 @@ dependencies {
 
 tasks.withType(Test) {
     doFirst {
-        logger.quiet("jacoco.enabled = ${jacoco.enabled}")
         file("$rootDir/jacoco.log").write("${jacoco.enabled}")
     }
 }

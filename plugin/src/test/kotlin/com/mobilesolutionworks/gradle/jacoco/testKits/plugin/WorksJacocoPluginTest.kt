@@ -9,29 +9,29 @@ import java.util.*
 
 internal class WorksJacocoPluginTest : TestKit("PluginTests") {
 
-    @Test
-    fun `test with without jacoco`() {
-        rootDir.withPaths("target", "build.gradle").apply {
-            appendText("")
-            appendText("""
-            worksJacoco {
-                hasTestKit = true
-                agentPropertiesName = "agent.properties"
-            }
-        """.trimMargin())
-        }
-
-        val runner = GradleRunner.create()
-                .forwardOutput()
-                .withPluginClasspath()
-                .withProjectDir(rootDir)
-
-        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
-                .build()
-                .let {
-                    assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
-                }
-    }
+//    @Test
+//    fun `test with without jacoco`() {
+//        rootDir.withPaths("target", "build.gradle").apply {
+//            appendText("")
+//            appendText("""
+//            worksJacoco {
+//                hasTestKit = true
+//                agentPropertiesName = "agent.properties"
+//            }
+//        """.trimMargin())
+//        }
+//
+//        val runner = GradleRunner.create()
+//                .forwardOutput()
+//                .withPluginClasspath()
+//                .withProjectDir(rootDir)
+//
+//        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
+//                .build()
+//                .let {
+//                    assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
+//                }
+//    }
 
     @Test
     fun `test with jacoco`() {

@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.mobilesolutionworks.gradle"
-version = "1.1.2"
+version = "1.1.3-BUILD-1"
 
 repositories {
     mavenCentral()

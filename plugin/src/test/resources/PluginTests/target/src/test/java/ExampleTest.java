@@ -6,7 +6,7 @@ import org.junit.Test;
 public class ExampleTest {
 
     @Test
-    public void verifyTestKitUsable() {
+    public void test() {
         new TestKitConfiguration("javaagent-for-testkit.properties", getClass().getSimpleName());
     }
 }

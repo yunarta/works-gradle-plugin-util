@@ -29,8 +29,8 @@ class WorksJacocoPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             with(it) {
-                setupDeps()
                 if (plugins.hasPlugin(JacocoPlugin::class.java)) {
+                    setupDeps()
                     setupPreparationTasks()
                     setupTestKitTasks()
                     setupOpenReportTasks()
@@ -48,8 +48,14 @@ class WorksJacocoPlugin : Plugin<Project> {
                         else -> listOf("testCompile", "testRuntime")
                     }.contains(it.name)
                 }.map {
-                    dependencies.add(it.name, task.outputs.files)
-                    dependencies.add(it.name, files(task.library))
+                    dependencies.add(it.name, files(task.outputs))
+                }
+
+                // ensure creation of dependency file during project loading
+                project.buildDir.withPaths("testKit", "libs").apply {
+                    if (!exists()) {
+                        task.extract()
+                    }
                 }
             }
         }
