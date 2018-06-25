@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'com.mobilesolutionworks.gradle.jacoco'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+

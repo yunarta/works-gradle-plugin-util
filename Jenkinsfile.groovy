@@ -9,7 +9,7 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: buildCount))
-        disableConcurrentBuilds()
+        // disableConcurrentBuilds()
     }
 
     stages {
@@ -59,7 +59,7 @@ pipeline {
 
                 echo "Build for test and analyze"
                 sh """echo "Execute test"
-                        ./gradlew cleanTest test -PignoreFailures=${
+                        ./gradlew cleanTest test worksGatherReport -PignoreFailures=${
                     seedEval("test", [1: "true", "else": "false"])
                 }"""
             }
@@ -75,8 +75,8 @@ pipeline {
             steps {
                 echo "Publishing test and analyze result"
 
-                jacoco execPattern: 'plugin/build/jacoco/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
-                junit allowEmptyResults: true, testResults: '**/test-results/**/*.xml'
+                jacoco execPattern: 'build/reports/jacoco/exec/root/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
+                junit allowEmptyResults: true, testResults: 'build/reports/junit/xml/**/*.xml'
 //                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'plugin/build/reports/detekt/detekt-report.xml', unHealthy: ''
 
 //                codeCoverage()
