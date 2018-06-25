@@ -29,6 +29,7 @@ worksJacoco {
 }
 
 worksReporting  {
+    checkstyleTasks.add("detektCheck")
     checkstyleFiles = files("build/reports/detekt")
 }
 
