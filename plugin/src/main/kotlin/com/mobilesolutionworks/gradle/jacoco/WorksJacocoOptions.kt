@@ -11,4 +11,6 @@ open class WorksJacocoOptions {
     var onlyRunCoverageWhenReporting = false
 
     var agentPropertiesName = "javaagent-for-testkit.properties"
+
+    var useTestKitLib = true
 }

@@ -5,6 +5,7 @@ import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.*
 
 internal class WorksJacocoPluginTest : TestKit("PluginTests") {
 
@@ -85,6 +86,39 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
                             .map { it.contains("customJacoco") }.reduce { a, b -> a || b })
                 }
     }
+
+    @Test
+    fun `test not using built in test-kit library`() {
+        rootDir.withPaths("target", "build.gradle").apply {
+            appendText("")
+            appendText("""
+
+            apply plugin: "jacoco"
+            worksJacoco {
+                hasTestKit = true
+                agentPropertiesName = "agent.properties"
+                useTestKitLib = false
+            }
+
+            tasks.withType(JacocoReport) {
+                reports {
+                    html.enabled = false
+                }
+            }
+        """.trimMargin())
+        }
+
+        Locale.setDefault(Locale.JAPANESE)
+        GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withProjectDir(rootDir).withArguments("clean", "test")
+                .buildAndFail()
+                .let {
+                    assertEquals(true, it.output.contains("package com.mobilesolutionworks.gradle.jacoco does not exist"))
+                }
+    }
+
 
     @Test
     fun `test open jacoco report`() {

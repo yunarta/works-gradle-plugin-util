@@ -20,7 +20,6 @@ class JacocoOpenReportTests {
             )
 
             listOf(Os.FAMILY_WINDOWS, Os.FAMILY_MAC).filter {
-                println("$it = ${Os.isFamily(it)}")
                 Os.isFamily(it)
             }.mapNotNull {
                 executionCommands[it]

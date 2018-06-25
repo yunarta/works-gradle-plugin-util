@@ -24,12 +24,12 @@ class WorksJacocoPlugin : Plugin<Project> {
         options.testKitTmpDir = project.buildDir.withPaths("tmp", "testKit").path
 
         with(project) {
-            setupDeps()
             setupClean()
         }
 
         project.afterEvaluate {
             with(it) {
+                setupDeps()
                 if (plugins.hasPlugin(JacocoPlugin::class.java)) {
                     setupPreparationTasks()
                     setupTestKitTasks()
@@ -40,15 +40,17 @@ class WorksJacocoPlugin : Plugin<Project> {
     }
 
     private fun Project.setupDeps() {
-        tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
-            configurations.filter {
-                when {
-                    GradleVersion.current() >= GradleVersion.version("3.4") -> listOf("testImplementation", "testRuntimeOnly")
-                    else -> listOf("testCompile", "testRuntime")
-                }.contains(it.name)
-            }.map {
-                dependencies.add(it.name, task.outputs.files)
-                dependencies.add(it.name, files(task.library))
+        if (worksJacoco.useTestKitLib) {
+            tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
+                configurations.filter {
+                    when {
+                        GradleVersion.current() >= GradleVersion.version("3.4") -> listOf("testImplementation", "testRuntimeOnly")
+                        else -> listOf("testCompile", "testRuntime")
+                    }.contains(it.name)
+                }.map {
+                    dependencies.add(it.name, task.outputs.files)
+                    dependencies.add(it.name, files(task.library))
+                }
             }
         }
     }

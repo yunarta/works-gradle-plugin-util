@@ -7,11 +7,11 @@ plugins {
     jacoco
 
     id("com.gradle.plugin-publish") version "0.9.10"
-    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.0"
+    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.2"
 }
 
 group = "com.mobilesolutionworks.gradle"
-version = "1.1.1"
+version = "1.1.2"
 
 repositories {
     mavenCentral()
@@ -23,6 +23,7 @@ jacoco {
 
 worksJacoco {
     hasTestKit = true
+    useTestKitLib = false
 }
 
 tasks.withType<KotlinCompile> {
@@ -35,57 +36,67 @@ tasks.withType<Test> {
     }
 }
 
-val junitRulesSourceSet = java.sourceSets.create("junitRules") {
-    java.srcDir("src/junitRules/java")
-}
-
-val junitRules = junitRulesSourceSet.let {
-    configurations.getByName(it.compileConfigurationName)
-}
-
-val junitRulesJar = tasks.create("junitRulesJar", Jar::class.java) {
-    classifier = "testKit"
-    dependsOn(junitRulesSourceSet.output)
-    from(junitRulesSourceSet.output.classesDirs)
-}
-
-val junitRulesProperties = tasks.create("junitRulesProperties", WriteProperties::class.java) {
-    dependsOn(junitRulesJar)
-
-    outputFile = file("${junitRulesJar.destinationDir}/testKit.properties")
-    property("TestKit", "works-jacoco-${project.version}-testKit.jar")
-}
-
-val junitRulesRuntime = tasks.create("junitRulesRuntime", Copy::class.java) {
-    dependsOn("junitRulesJar", "junitRulesProperties")
-    from(junitRulesJar.archivePath) {
-        into("META-INF")
-    }
-    from(junitRulesProperties.outputFile) {
-        into("META-INF")
+java.sourceSets.create("testKit") {
+    java.srcDir("src/testKit/java")
+}.let { sourceSet ->
+    dependencies {
+        testImplementation(sourceSet.output)
     }
 
-    destinationDir = file("$buildDir/junitRulesRuntime")
-    tasks.withType<Test> {
-        dependsOn(this@create)
-    }
-}
+    val jarTestKit = tasks.create("jarTestKit", Jar::class.java) {
+        group = "testKit"
+        classifier = "testKit"
 
-val jar = tasks.getByName<Jar>("jar") {
-    dependsOn("junitRulesProperties")
-    from(junitRulesJar.archivePath) {
-        this.into("META-INF")
-    }
-    from(junitRulesProperties.outputFile) {
-        into("META-INF")
-    }
-}
+        dependsOn(sourceSet.output)
+        from(sourceSet.output.classesDirs)
 
-tasks.create("checkJar", Copy::class.java) {
-    dependsOn("jar")
+        dependencies {
+            implementation(files(archivePath))
+        }
+    }
 
-    from(zipTree(jar.archivePath))
-    into("$buildDir/test")
+    val testKitProperties = tasks.create("testKitProperties", WriteProperties::class.java) {
+        group = "testKit"
+        dependsOn(jarTestKit)
+
+        outputFile = file("${jarTestKit.destinationDir}/testKit.properties")
+        property("TestKit", "works-jacoco-${project.version}-testKit.jar")
+    }
+
+    tasks.create("testKitInjectRuntime", Copy::class.java) {
+        group = "testKit"
+
+        dependsOn(jarTestKit, testKitProperties)
+        from(jarTestKit.archivePath) {
+            into("META-INF")
+        }
+        from(testKitProperties.outputFile) {
+            into("META-INF")
+        }
+
+        destinationDir = file("$buildDir/testKit/runtime")
+        tasks.withType<Test> {
+            dependsOn(this@create)
+        }
+
+        dependencies {
+            val files = files(destinationDir)
+
+            runtime(files)
+            testImplementation(files)
+        }
+    }
+
+    tasks.getByName<Jar>("jar") {
+        dependsOn(jarTestKit, testKitProperties)
+        from(jarTestKit.archivePath) {
+            this.into("META-INF")
+        }
+
+        from(testKitProperties.outputFile) {
+            into("META-INF")
+        }
+    }
 }
 
 dependencies {
@@ -95,17 +106,8 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.apache.commons:commons-lang3:3.7")
 
-    implementation(files(junitRulesJar.archivePath))
-    runtime(files(junitRulesRuntime.destinationDir))
-
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
-    testImplementation(junitRulesSourceSet.output)
-    testImplementation(files(junitRulesRuntime.destinationDir))
-
-    junitRules("junit:junit:4.12")
-    junitRules(kotlin("stdlib-jdk8"))
-    junitRules(kotlin("reflect"))
 }
 
 gradlePlugin {
@@ -120,7 +122,7 @@ gradlePlugin {
 pluginBundle {
     website = "https://github.com/yunarta/works-jacoco-gradle-plugin"
     vcsUrl = "https://github.com/yunarta/works-jacoco-gradle-plugin"
-    description = "Plugin to reduce code duplication especially when writing Gradle plugin project"
+    description = "Plugin to reduce code duplication when writing Gradle plugin project"
     tags = listOf("jacoco", "works")
 
     (plugins) {
@@ -131,13 +133,8 @@ pluginBundle {
     }
 }
 
-tasks.withType<PluginUnderTestMetadata> {
-
-}
-
 tasks.withType<Delete>().whenObjectAdded {
     if (name == "cleanTest") {
-        println("Clean up testKit")
         delete(file("$buildDir/tmp/testKit"))
     }
 }
