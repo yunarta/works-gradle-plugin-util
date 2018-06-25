@@ -33,8 +33,8 @@ class WorksJacocoPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             with(it) {
+                setupDeps()
                 if (plugins.hasPlugin(JacocoPlugin::class.java)) {
-                    setupDeps()
                     setupPreparationTasks()
                     setupTestKitTasks()
                     setupOpenReportTasks()

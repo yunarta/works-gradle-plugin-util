@@ -3,35 +3,37 @@ package com.mobilesolutionworks.gradle.jacoco.testKits.plugin
 import com.mobilesolutionworks.gradle.jacoco.TestKit
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.*
 
 internal class WorksJacocoPluginTest : TestKit("PluginTests") {
 
-//    @Test
-//    fun `test with without jacoco`() {
-//        rootDir.withPaths("target", "build.gradle").apply {
-//            appendText("")
-//            appendText("""
-//            worksJacoco {
-//                hasTestKit = true
-//                agentPropertiesName = "agent.properties"
-//            }
-//        """.trimMargin())
-//        }
-//
-//        val runner = GradleRunner.create()
-//                .forwardOutput()
-//                .withPluginClasspath()
-//                .withProjectDir(rootDir)
-//
-//        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
-//                .build()
-//                .let {
-//                    assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
-//                }
-//    }
+    @Test
+    fun `test with without jacoco`() {
+        rootDir.withPaths("target", "build.gradle").apply {
+            appendText("")
+            appendText("""
+            worksJacoco {
+                hasTestKit = true
+                agentPropertiesName = "agent.properties"
+            }
+        """.trimMargin())
+        }
+
+        val runner = GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withProjectDir(rootDir)
+
+        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
+                .build()
+                .let {
+                    assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
+                }
+    }
 
     @Test
     fun `test with jacoco`() {

@@ -81,4 +81,26 @@ internal class JacocoTestPreparationTests : TestKit("JacocoTestPreparationTests"
                     Assert.assertEquals("true", File(rootDir, "jacoco.log").readLines().single())
                 }
     }
+
+    @Test
+    fun `run test with onlyRunCoverageWhenReporting = false, and with report task`() {
+        rootDir.withPaths("target", "build.gradle").apply {
+            appendText("")
+            appendText("""
+            worksJacoco {
+                onlyRunCoverageWhenReporting = false
+            }
+        """.trimMargin())
+        }
+
+        GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withProjectDir(rootDir)
+                .withArguments("clean", "test", "jacocoTestReport")
+                .build()
+                .let {
+                    Assert.assertEquals("true", File(rootDir, "jacoco.log").readLines().single())
+                }
+    }
 }
