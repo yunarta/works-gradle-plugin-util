@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.mobilesolutionworks.gradle.jacoco'
+}
+
+repositories {
+    jcenter()
+}
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+tasks.withType(Test) {
+    doFirst {
+        file("$rootDir/jacoco.log").write("${jacoco.enabled}")
+    }
+}

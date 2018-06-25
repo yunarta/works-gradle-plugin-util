@@ -3,18 +3,18 @@ buildscript {
         jcenter()
         google()
         mavenCentral()
-        maven {
-            url = java.net.URI("https://dl.bintray.com/mobilesolutionworks/release")
-        }
     }
+}
 
-    dependencies {
-        classpath("com.mobilesolutionworks:works-publish:1.5.2")
-    }
+plugins {
+    id("com.mobilesolutionworks.gradle.reporting") version "1.0.9"
+    id("jacoco")
 }
 
 allprojects {
     repositories {
+        jcenter()
+        google()
         mavenCentral()
     }
 }
