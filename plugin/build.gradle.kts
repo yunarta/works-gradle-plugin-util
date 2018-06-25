@@ -6,8 +6,10 @@ plugins {
     `java-gradle-plugin`
     jacoco
 
+    id("io.gitlab.arturbosch.detekt") version "1.0.0.RC7-2"
     id("com.gradle.plugin-publish") version "0.9.10"
     id("com.mobilesolutionworks.gradle.jacoco") version "1.1.3"
+    id("com.mobilesolutionworks.gradle.reporting")
 }
 
 group = "com.mobilesolutionworks.gradle"
@@ -24,6 +26,23 @@ jacoco {
 worksJacoco {
     hasTestKit = true
     useTestKitLib = false
+}
+
+worksReporting  {
+    checkstyleFiles = files("build/reports/detekt")
+}
+
+detekt {
+    version = "1.0.0.RC7-2"
+
+    profile("main", Action {
+        input = "src/main/kotlin"
+        filters = ".*/resources/.*,.*/build/.*"
+        config = file("default-detekt-config.yml")
+        output = "$buildDir/reports/detekt"
+        outputName = "detekt-report"
+        baseline = "reports/baseline.xml"
+    })
 }
 
 tasks.withType<KotlinCompile> {

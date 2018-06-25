@@ -77,9 +77,9 @@ pipeline {
 
                 jacoco execPattern: 'build/reports/jacoco/exec/root/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
                 junit allowEmptyResults: true, testResults: 'build/reports/junit/xml/**/*.xml'
-//                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'plugin/build/reports/detekt/detekt-report.xml', unHealthy: ''
+                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'build/reports/checkstyle/**/*.xml', unHealthy: ''
 
-//                codeCoverage()
+                codeCoverage()
             }
         }
 
@@ -268,6 +268,6 @@ def publish(String repo) {
 
 def codeCoverage() {
     withCredentials([[$class: 'StringBinding', credentialsId: "codecov-token", variable: "CODECOV_TOKEN"]]) {
-        sh "curl -s https://codecov.io/bash | bash -s - -f plugin/build/reports/test/jacocoTestReport.xml"
+        sh "curl -s https://codecov.io/bash | bash -s - -f build/reports/jacoco/xml/root/coverage.xml"
     }
 }

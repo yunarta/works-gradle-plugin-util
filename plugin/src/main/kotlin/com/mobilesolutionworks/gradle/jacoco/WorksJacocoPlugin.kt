@@ -1,6 +1,10 @@
 package com.mobilesolutionworks.gradle.jacoco
 
-import com.mobilesolutionworks.gradle.jacoco.tasks.*
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureDeps
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureRunner
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitSetup
+import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestPreparation
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.apache.commons.lang3.StringUtils
 import org.gradle.api.Plugin
@@ -44,8 +48,10 @@ class WorksJacocoPlugin : Plugin<Project> {
             tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
                 configurations.filter {
                     when {
-                        GradleVersion.current() >= GradleVersion.version("3.4") -> listOf("testImplementation", "testRuntimeOnly")
-                        else -> listOf("testCompile", "testRuntime")
+                        GradleVersion.current() >= GradleVersion.version("3.4") ->
+                            listOf("testImplementation", "testRuntimeOnly")
+                        else ->
+                            listOf("testCompile", "testRuntime")
                     }.contains(it.name)
                 }.map {
                     dependencies.add(it.name, files(task.outputs))
