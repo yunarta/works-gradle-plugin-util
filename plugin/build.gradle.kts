@@ -7,11 +7,11 @@ plugins {
     jacoco
 
     id("com.gradle.plugin-publish") version "0.9.10"
-    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.2"
+    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.3"
 }
 
 group = "com.mobilesolutionworks.gradle"
-version = "1.1.3-BUILD-1"
+version = "1.1.3"
 
 repositories {
     mavenCentral()
