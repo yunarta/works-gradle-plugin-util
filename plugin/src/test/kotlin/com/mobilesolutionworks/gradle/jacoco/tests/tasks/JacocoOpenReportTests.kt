@@ -3,7 +3,8 @@ package com.mobilesolutionworks.gradle.jacoco.tests.tasks
 import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class JacocoOpenReportTests {
 
@@ -11,7 +12,7 @@ class JacocoOpenReportTests {
     fun `task creation`() {
         with(ProjectBuilder.builder().build()) {
             val create = tasks.create("openReport", JacocoOpenReport::class.java) {
-                it.setReport("index.html")
+                it.setReport(JacocoOpenReport.commands, "index.html")
             }
 
             val executionCommands = mapOf(
@@ -28,6 +29,16 @@ class JacocoOpenReportTests {
             }.map {
                 create.commandLine == it
             }
+        }
+    }
+
+    @Test
+    fun `task creation failed`() {
+        with(ProjectBuilder.builder().build()) {
+            val create = tasks.create("openReport", JacocoOpenReport::class.java) {
+                it.setReport(emptyList(), "index.html")
+            }
+            assertTrue(create.commandLine.none { it != null })
         }
     }
 }

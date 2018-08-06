@@ -108,11 +108,11 @@ class WorksJacocoPlugin : Plugin<Project> {
     }
 
     private fun Project.setupOpenReportTasks() {
-        tasks.withType(JacocoReport::class.java).forEach {
-            it.reports.html.let { html ->
+        tasks.withType(JacocoReport::class.java).forEach { report ->
+            report.reports.html.let { html ->
                 if (html.isEnabled) {
-                    tasks.create("open" + StringUtils.capitalize(it.name), JacocoOpenReport::class.java) {
-                        it.setReport(html.entryPoint.absolutePath)
+                    tasks.create("open" + StringUtils.capitalize(report.name), JacocoOpenReport::class.java) {
+                        it.setReport(JacocoOpenReport.commands, html.entryPoint.absolutePath)
                     }
                 }
             }

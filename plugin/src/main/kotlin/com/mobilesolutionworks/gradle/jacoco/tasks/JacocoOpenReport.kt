@@ -6,29 +6,34 @@ import javax.inject.Inject
 
 open class JacocoOpenReport @Inject constructor() : Exec() {
 
-    private val executionCommands = mapOf(
-            Os.FAMILY_WINDOWS to listOf("cmd", "/c", "start"),
-            Os.FAMILY_MAC to listOf("open"),
-            Os.FAMILY_UNIX to listOf("xdg-open")
-    )
+    companion object {
+        private val executionCommands = mapOf(
+                Os.FAMILY_WINDOWS to listOf("cmd", "/c", "start"),
+                Os.FAMILY_MAC to listOf("open"),
+                Os.FAMILY_UNIX to listOf("xdg-open")
+        )
+
+        val commands: List<List<String>>
+            get() {
+                return listOf(Os.FAMILY_WINDOWS, Os.FAMILY_MAC, Os.FAMILY_UNIX).filter {
+                    Os.isFamily(it)
+                }.map {
+                    // default should not be returned as we only select from existing keys
+                    executionCommands.getOrDefault(it, listOf())
+                }
+            }
+    }
 
     init {
         group = "works-jacoco"
         description = "Open jacoco report"
     }
 
-    fun setReport(report: String) {
-        listOf(Os.FAMILY_WINDOWS, Os.FAMILY_MAC, Os.FAMILY_UNIX).filter {
-            Os.isFamily(it)
-        }.map {
-            // default should not be returned as we only select from existing keys
-            executionCommands.getOrDefault(it, listOf())
-        }.map {
-            it.toMutableList<Any?>()
-        }.lastOrNull()?.let {
-            it.add(report)
-            commandLine(it)
-//            commandLine = it as List<*>?
+    fun setReport(commands: List<List<String>>, report: String) {
+        commands.lastOrNull()?.let {
+            commandLine(it.toMutableList().apply {
+                add(report)
+            })
         }
     }
 }
