@@ -256,7 +256,7 @@ tasks.withType<Test> {
     }
 
     useJUnitPlatform()
-    maxParallelForks = Runtime.getRuntime().availableProcessors().div(2)
+    maxParallelForks = Math.max(1, Runtime.getRuntime().availableProcessors().div(2))
     doFirst {
         logger.quiet("Test with max $maxParallelForks parallel forks")
     }
