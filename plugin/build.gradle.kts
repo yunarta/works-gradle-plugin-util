@@ -8,12 +8,12 @@ plugins {
 
     id("io.gitlab.arturbosch.detekt") version "1.0.0.RC7-2"
     id("com.gradle.plugin-publish") version "0.9.10"
-    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.3"
+    id("com.mobilesolutionworks.gradle.jacoco") version "1.1.4"
     id("com.mobilesolutionworks.gradle.reporting")
 }
 
 group = "com.mobilesolutionworks.gradle"
-version = "1.1.3"
+version = "1.1.4"
 
 repositories {
     mavenCentral()
