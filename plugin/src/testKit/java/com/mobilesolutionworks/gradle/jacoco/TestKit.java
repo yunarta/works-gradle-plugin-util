@@ -30,8 +30,6 @@ public class TestKit {
             properties.setProperty("org.gradle.jvmargs", agentString);
             properties.setProperty("org.gradle.daemon", "false");
             properties.setProperty("org.gradle.parallel", "false");
-            properties.setProperty("org.gradle.daemon.idletimeout", "1000");
-            properties.setProperty("org.gradle.workers.max", "1");
 
             properties.store(new FileOutputStream(new File(rootDir, "gradle.properties")), "Gradle");
         }
