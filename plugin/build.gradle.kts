@@ -15,10 +15,6 @@ plugins {
 group = "com.mobilesolutionworks.gradle"
 version = "1.1.3"
 
-repositories {
-    mavenCentral()
-}
-
 jacoco {
     toolVersion = "0.8.1"
 }
@@ -56,11 +52,18 @@ tasks.withType<Test> {
     }
 }
 
+val testKit by configurations.creating
 java.sourceSets.create("testKit") {
     java.srcDir("src/testKit/java")
 }.let { sourceSet ->
     dependencies {
+        testKit(gradleTestKit())
+        testKit("org.junit.jupiter:junit-jupiter-api:5.3.0-M1")
         testImplementation(sourceSet.output)
+    }
+
+    afterEvaluate {
+        sourceSet.compileClasspath = files(testKit.files)
     }
 
     val jarTestKit = tasks.create("jarTestKit", Jar::class.java) {
@@ -106,6 +109,77 @@ java.sourceSets.create("testKit") {
             testImplementation(files)
         }
     }
+    tasks.getByName<Jar>("jar") {
+        dependsOn(jarTestKit, testKitProperties)
+        from(jarTestKit.archivePath) {
+            into("META-INF")
+        }
+
+        from(testKitProperties.outputFile) {
+            into("META-INF")
+        }
+    }
+}
+
+val testKitKotlin by configurations.creating
+java.sourceSets.create("testKitKotlin") {
+    java.srcDir("src/testKitKotlin/java")
+}.let { sourceSet ->
+    dependencies {
+        testKitKotlin(kotlin("stdlib-jdk8"))
+        testKitKotlin(kotlin("reflect"))
+        testKitKotlin(gradleTestKit())
+        testKitKotlin("org.junit.jupiter:junit-jupiter-api:5.3.0-M1")
+        testImplementation(sourceSet.output)
+    }
+
+    afterEvaluate {
+        sourceSet.compileClasspath = files(testKitKotlin.files)
+    }
+
+    val jarTestKit = tasks.create("jarTestKitKotlin", Jar::class.java) {
+        group = "testKit"
+        classifier = "testKitKotlin"
+
+        dependsOn(sourceSet.output)
+        from(sourceSet.output.classesDirs)
+
+        dependencies {
+            implementation(files(archivePath))
+        }
+    }
+
+    val testKitProperties = tasks.create("testKitKotlinProperties", WriteProperties::class.java) {
+        group = "testKit"
+        dependsOn(jarTestKit)
+
+        outputFile = file("${jarTestKit.destinationDir}/testKitKotlin.properties")
+        property("TestKitKotlin", "works-jacoco-${project.version}-testKitKotlin.jar")
+    }
+
+    tasks.create("testKitKotlinInjectRuntime", Copy::class.java) {
+        group = "testKit"
+
+        dependsOn(jarTestKit, testKitProperties)
+        from(jarTestKit.archivePath) {
+            into("META-INF")
+        }
+        from(testKitProperties.outputFile) {
+            into("META-INF")
+        }
+
+        destinationDir = file("$buildDir/testKitKotlin/runtime")
+        tasks.withType<Test> {
+            dependsOn(this@create)
+        }
+
+        dependencies {
+            val files = files(destinationDir)
+
+            runtime(files)
+            testImplementation(files)
+        }
+    }
 
     tasks.getByName<Jar>("jar") {
         dependsOn(jarTestKit, testKitProperties)
@@ -121,6 +195,7 @@ java.sourceSets.create("testKit") {
 
 dependencies {
     compileOnly(gradleApi())
+    compileOnly(gradleTestKit())
 
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
@@ -128,6 +203,10 @@ dependencies {
 
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0-M1")
+
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.0-M1")
+    testRuntime("org.junit.vintage:junit-vintage-engine:5.3.0-M1")
 }
 
 gradlePlugin {
@@ -176,6 +255,7 @@ tasks.withType<Test> {
         html.isEnabled = false
     }
 
+    useJUnitPlatform()
     maxParallelForks = Runtime.getRuntime().availableProcessors().div(2)
     doFirst {
         logger.quiet("Test with max $maxParallelForks parallel forks")

@@ -1,10 +1,6 @@
 package com.mobilesolutionworks.gradle.jacoco
 
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoOpenReport
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureDeps
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitConfigureRunner
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestKitSetup
-import com.mobilesolutionworks.gradle.jacoco.tasks.JacocoTestPreparation
+import com.mobilesolutionworks.gradle.jacoco.tasks.*
 import com.mobilesolutionworks.gradle.jacoco.util.withPaths
 import org.apache.commons.lang3.StringUtils
 import org.gradle.api.Plugin
@@ -20,12 +16,25 @@ internal val Project.worksJacoco: WorksJacocoOptions
         return extensions.getByType(WorksJacocoOptions::class.java)
     }
 
+
 class WorksJacocoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        val options = project.extensions.create("worksJacoco", WorksJacocoOptions::class.java)
+        val deps = project.tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java)
+        val kotlinDeps = project.tasks.create("jacocoTestKitKotlinConfigureDeps", JacocoTestKitKotlinConfigureDeps::class.java)
+
+        val options = WorksJacocoOptionsImpl(
+                deps,
+                kotlinDeps
+        )
         options.testKitExecDir = File(project.buildDir, "jacoco").path
         options.testKitTmpDir = project.buildDir.withPaths("tmp", "testKit").path
+
+        if (GradleVersion.current() >= GradleVersion.version("3.4")) {
+            project.extensions.add(WorksJacocoOptions::class.java, "worksJacoco", options)
+        } else {
+            project.extensions.add("worksJacoco", options)
+        }
 
         with(project) {
             setupClean()
@@ -33,7 +42,7 @@ class WorksJacocoPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             with(it) {
-                setupDeps()
+                //                setupDeps()
                 if (plugins.hasPlugin(JacocoPlugin::class.java)) {
                     setupPreparationTasks()
                     setupTestKitTasks()
@@ -43,29 +52,29 @@ class WorksJacocoPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.setupDeps() {
-        if (worksJacoco.useTestKitLib) {
-            tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
-                configurations.filter {
-                    when {
-                        GradleVersion.current() >= GradleVersion.version("3.4") ->
-                            listOf("testImplementation", "testRuntimeOnly")
-                        else ->
-                            listOf("testCompile", "testRuntime")
-                    }.contains(it.name)
-                }.map {
-                    dependencies.add(it.name, files(task.outputs))
-                }
-
-                // ensure creation of dependency file during project loading
-                project.buildDir.withPaths("testKit", "libs").apply {
-                    if (!exists()) {
-                        task.extract()
-                    }
-                }
-            }
-        }
-    }
+//    private fun Project.setupDeps() {
+//        if (worksJacoco.useTestKitLib) {
+//            tasks.create("jacocoTestKitConfigureDeps", JacocoTestKitConfigureDeps::class.java) { task ->
+//                configurations.filter {
+//                    when {
+//                        GradleVersion.current() >= GradleVersion.version("3.4") ->
+//                            listOf("testImplementation", "testRuntimeOnly")
+//                        else ->
+//                            listOf("testCompile", "testRuntime")
+//                    }.contains(it.name)
+//                }.map {
+//                    dependencies.add(it.name, files(task.outputs))
+//                }
+//
+//                // ensure creation of dependency file during project loading
+//                project.buildDir.withPaths("testKit", "libs").apply {
+//                    if (!exists()) {
+//                        task.extract()
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun Project.setupClean() {
         tasks.withType(Delete::class.java).whenObjectAdded { delete ->

@@ -10,7 +10,7 @@ import org.gradle.testing.jacoco.tasks.JacocoBase
 /**
  * Task that monitor whether coverage should be executed when jacoco report tasks is included in the queue.
  */
-internal open class JacocoTestPreparation : DefaultTask() {
+open class JacocoTestPreparation : DefaultTask() {
 
     init {
         group = "works-others"

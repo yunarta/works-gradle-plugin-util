@@ -1,0 +1,21 @@
+plugins {
+    id('java-library')
+    id('com.mobilesolutionworks.gradle.jacoco')
+    id('org.jetbrains.kotlin.jvm').version('1.2.50')
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.50")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.2.50")
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.0-M1')
+    testImplementation('junit:junit:4.12')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.0-M1')
+    testRuntime('org.junit.vintage:junit-vintage-engine:5.3.0-M1')
+}
+
+test.useJUnitPlatform()
+

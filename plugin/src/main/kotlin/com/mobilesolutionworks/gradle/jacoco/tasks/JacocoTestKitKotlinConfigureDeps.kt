@@ -7,18 +7,18 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.util.*
 
-open class JacocoTestKitConfigureDeps : ConfigureDeps() {
+open class JacocoTestKitKotlinConfigureDeps : ConfigureDeps() {
 
     @OutputFile
     val library: File
 
     init {
-        val loader = JacocoTestKitConfigureDeps::class.java.classLoader
+        val loader = JacocoTestKitKotlinConfigureDeps::class.java.classLoader
         val name = Properties().apply {
-            load(loader.getResourceAsStream("META-INF/testKit.properties"))
-        }.getOrDefault("TestKit", "").toString()
+            load(loader.getResourceAsStream("META-INF/testKitKotlin.properties"))
+        }.getOrDefault("TestKitKotlin", "").toString()
 
-        library = project.buildDir.withPaths("testKit", "libs", name)
+        library = project.buildDir.withPaths("testKitKotlin", "libs", name)
         outputs.file(library)
     }
 
@@ -26,7 +26,7 @@ open class JacocoTestKitConfigureDeps : ConfigureDeps() {
     override fun extract() {
         library.parentFile.mkdirs()
         val resource = "META-INF/${library.name}"
-        JacocoTestKitConfigureDeps::class.java.classLoader.getResourceAsStream(resource)
+        JacocoTestKitKotlinConfigureDeps::class.java.classLoader.getResourceAsStream(resource)
                 .copyTo(library.outputStream())
     }
 }

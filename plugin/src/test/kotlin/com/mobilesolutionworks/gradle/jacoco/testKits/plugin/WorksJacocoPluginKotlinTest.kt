@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
 
-internal class WorksJacocoPluginTest : TestKit("PluginTests") {
+internal class WorksJacocoPluginKotlinTest : TestKit("PluginKotlinTests") {
 
     @Test
     fun `test with without jacoco`() {
@@ -20,7 +20,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
             }
 
             dependencies {
-                testImplementation(worksJacoco.testKitLib())
+                testImplementation(worksJacoco.testKitLibKotlin())
             }
         """.trimMargin())
         }
@@ -30,7 +30,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
                 .withPluginClasspath()
                 .withProjectDir(rootDir)
 
-        runner.withArguments("clean", "cleanTest", "cleanBuild", "test")
+        runner.withArguments("clean", "cleanTest", "cleanBuild", "test", "--stacktrace")
                 .build()
                 .let {
                     assertEquals(false, rootDir.withPaths("target", "build", "testKit", "gradle", "agent.properties").exists())
@@ -50,7 +50,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
             }
 
             dependencies {
-                testImplementation(worksJacoco.testKitLib())
+                testImplementation(worksJacoco.testKitLibKotlin())
             }
         """.trimMargin())
         }
@@ -81,7 +81,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
             }
 
             dependencies {
-                testImplementation(worksJacoco.testKitLib())
+                testImplementation(worksJacoco.testKitLibKotlin())
             }
         """.trimMargin())
         }
@@ -120,14 +120,14 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
         """.trimMargin())
         }
 
-        Locale.setDefault(Locale.JAPANESE)
+        Locale.setDefault(Locale.ENGLISH)
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
-                .withProjectDir(rootDir).withArguments("clean", "test")
+                .withProjectDir(rootDir).withArguments("clean", "test", "--stacktrace")
                 .buildAndFail()
                 .let {
-                    assertEquals(true, it.output.contains("package com.mobilesolutionworks.gradle.jacoco does not exist"))
+                    assertEquals(true, it.output.contains("Unresolved reference: TestKitConfiguration"))
                 }
     }
 
@@ -145,7 +145,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
             }
 
             dependencies {
-                testImplementation(worksJacoco.testKitLib())
+                testImplementation(worksJacoco.testKitLibKotlin())
             }
 
             tasks.withType(JacocoReport) {
@@ -181,7 +181,7 @@ internal class WorksJacocoPluginTest : TestKit("PluginTests") {
             }
 
             dependencies {
-                testImplementation(worksJacoco.testKitLib())
+                testImplementation(worksJacoco.testKitLibKotlin())
             }
 
             tasks.withType(JacocoReport) {
