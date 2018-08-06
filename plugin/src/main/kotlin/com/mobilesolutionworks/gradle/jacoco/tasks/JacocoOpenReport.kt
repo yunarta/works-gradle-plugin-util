@@ -8,7 +8,8 @@ open class JacocoOpenReport @Inject constructor() : Exec() {
 
     private val executionCommands = mapOf(
             Os.FAMILY_WINDOWS to listOf("cmd", "/c", "start"),
-            Os.FAMILY_MAC to listOf("open")
+            Os.FAMILY_MAC to listOf("open"),
+            Os.FAMILY_UNIX to listOf("xdg-open")
     )
 
     init {
@@ -17,7 +18,7 @@ open class JacocoOpenReport @Inject constructor() : Exec() {
     }
 
     fun setReport(report: String) {
-        listOf(Os.FAMILY_WINDOWS, Os.FAMILY_MAC).filter {
+        listOf(Os.FAMILY_WINDOWS, Os.FAMILY_MAC, Os.FAMILY_UNIX).filter {
             Os.isFamily(it)
         }.map {
             // default should not be returned as we only select from existing keys
