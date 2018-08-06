@@ -24,7 +24,7 @@ open class JacocoOpenReport @Inject constructor() : Exec() {
             executionCommands.getOrDefault(it, listOf())
         }.map {
             it.toMutableList<Any?>()
-        }.last().let {
+        }.lastOrNull()?.let {
             it.add(report)
             commandLine(it)
 //            commandLine = it as List<*>?
