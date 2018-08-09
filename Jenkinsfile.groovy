@@ -62,7 +62,7 @@ pipeline {
 
                     steps {
                         echo "Run on ${env.NODE_NAME}"
-                        sh """run.sh cpd --files . --minimum-tokens 50 --format xml --failOnViolation false > cpd.xml"""
+                        sh """run.sh cpd --files . --minimum-tokens 100 --format xml --failOnViolation false > cpd.xml"""
                         dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'cpd.xml', unHealthy: ''
                     }
                 }
