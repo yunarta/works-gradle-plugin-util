@@ -61,6 +61,7 @@ pipeline {
                 sh """echo "Execute test"
                         ./gradlew cleanTest test -PignoreFailures=${seedEval("test", [1: "true", "else": "false"])}
                         ./gradlew worksGatherReport"""
+                sh """pmd cpd --files . --minimum-tokens 10 --format xml --failOnViolation false > build/reports/cpd.xml"""
             }
         }
 
@@ -73,7 +74,7 @@ pipeline {
 
             steps {
                 echo "Publishing test and analyze result"
-
+                dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'build/reports/cpd.xml', unHealthy: ''
                 jacoco execPattern: 'build/reports/jacoco/exec/root/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
                 junit allowEmptyResults: true, testResults: 'build/reports/junit/xml/**/*.xml'
                 checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'build/reports/checkstyle/**/*.xml', unHealthy: ''
