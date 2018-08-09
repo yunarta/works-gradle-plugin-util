@@ -1,11 +1,7 @@
 buildCount = env.DEFAULT_HISTORY_COUNT ?: "5"
 
 pipeline {
-    agent {
-        node {
-            label 'java'
-        }
-    }
+    agent { label 'java' }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: buildCount))
@@ -23,8 +19,7 @@ pipeline {
                     }
 
                     steps {
-                        checkout scm
-                        seedReset()
+                        echo "Run on ${env.NODE_NAME}"
                     }
                 }
 
@@ -50,18 +45,27 @@ pipeline {
                 }
             }
 
-            options {
-                retry(2)
-            }
+            parallel {
+                stage('CAT') {
+                    steps {
+                        echo "Run on ${env.NODE_NAME}"
+                        sh """./gradlew cleanTest test -PignoreFailures=true
+                              ./gradlew worksGatherReport"""
+                    }
+                }
 
-            steps {
-                seedGrow("test")
+                stage('Static Analysis') {
+                    agent { label 'worker' }
+                    environment {
+                        PATH = """${[tool('PMD')].join(File.pathSeparator) + File.pathSeparator}$PATH"""
+                    }
 
-                echo "Build for test and analyze"
-                sh """echo "Execute test"
-                        ./gradlew cleanTest test -PignoreFailures=${seedEval("test", [1: "true", "else": "false"])}
-                        ./gradlew worksGatherReport"""
-                sh """pmd cpd --files . --minimum-tokens 10 --format xml --failOnViolation false > build/reports/cpd.xml"""
+                    steps {
+                        echo "Run on ${env.NODE_NAME}"
+                        sh """run.sh cpd --files . --minimum-tokens 10 --format xml --failOnViolation false > cpd.xml"""
+                        dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'cpd.xml', unHealthy: ''
+                    }
+                }
             }
         }
 
@@ -73,8 +77,7 @@ pipeline {
             }
 
             steps {
-                echo "Publishing test and analyze result"
-                dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'build/reports/cpd.xml', unHealthy: ''
+                echo "Run on ${env.NODE_NAME}"
                 jacoco execPattern: 'build/reports/jacoco/exec/root/*.exec', classPattern: 'plugin/build/classes/kotlin/main', sourcePattern: ''
                 junit allowEmptyResults: true, testResults: 'build/reports/junit/xml/**/*.xml'
                 checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'build/reports/checkstyle/**/*.xml', unHealthy: ''
